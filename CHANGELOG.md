@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.3 - 2026-08-10
+
+- Group repeated unsupported SceneGraph nodes by type and count.
+- Collapse unsupported BrightScript statements into actionable source-line ranges.
+- Reduce IEDB compatibility output from 49 repetitive warnings to 5 diagnostics without hiding unsupported behavior.
+
 ## 0.1.0-alpha.2 - 2026-08-10
 
 - Resolve the entry SceneGraph component from `CreateScene()` instead of opening the first XML file.

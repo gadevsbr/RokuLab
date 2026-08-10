@@ -89,12 +89,18 @@ export function parseSceneGraph(xml: string): {
     const first = root?.find((entry) => Object.keys(entry).some((key) => key !== ':@'));
     if (!first) throw new SceneGraphParseError('Component has no SceneGraph children');
     const scene = convert(first);
-    const warnings: string[] = [];
+    const unsupportedCounts = new Map<string, number>();
     const visit = (node: SceneNodeData) => {
-      if (!supported.has(node.type)) warnings.push(`${node.type} is not rendered in this alpha`);
+      if (!supported.has(node.type))
+        unsupportedCounts.set(node.type, (unsupportedCounts.get(node.type) ?? 0) + 1);
       node.children.forEach(visit);
     };
     visit(scene);
+    const warnings = [...unsupportedCounts].map(([type, count]) =>
+      count === 1
+        ? `${type} is not rendered in this alpha`
+        : `${type} is not rendered in this alpha (${count} nodes)`,
+    );
     const scripts = component
       .filter((entry) => 'script' in entry)
       .map((entry) => (entry[':@'] as Record<string, string> | undefined)?.['@_uri'])

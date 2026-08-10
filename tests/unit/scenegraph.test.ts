@@ -23,4 +23,19 @@ describe('SceneGraph vertical slice', () => {
     expect(result.console[0]?.message).toBe('ready');
     expect(findNode(scene, 'title')?.properties.text).toBe('New');
   });
+  it('groups unsupported BrightScript statements into source ranges', () => {
+    const { scene } = parseSceneGraph(xml);
+    const result = runInit(
+      'sub init()\n unknownOne()\n unknownTwo()\n print "ok"\n unknownThree()\nend sub',
+      scene,
+      'Demo.brs',
+    );
+    expect(result.warnings).toEqual(['Unsupported BrightScript statements at Demo.brs:2-3, 5']);
+  });
+  it('groups repeated unsupported SceneGraph node types', () => {
+    const parsed = parseSceneGraph(
+      '<component name="Demo" extends="Scene"><children><Group><Video/><Video/></Group></children></component>',
+    );
+    expect(parsed.warnings).toEqual(['Video is not rendered in this alpha (2 nodes)']);
+  });
 });

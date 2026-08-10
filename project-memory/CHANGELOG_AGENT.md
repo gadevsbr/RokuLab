@@ -2,6 +2,7 @@
 
 ## 2026-08-10
 
+- Added grouped, source-aware compatibility diagnostics; reduced IEDB output from 49 repeated warnings to 5 actionable entries.
 - Fixed multi-component Roku channel loading by resolving the component passed to `CreateScene()`.
 - Added Roku bracketed coordinate support and compatibility regression coverage based on the IEDB channel structure.
 - Removed the hard-coded package staging version so Windows artifacts inherit the current desktop version.

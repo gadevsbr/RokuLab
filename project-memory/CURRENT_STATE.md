@@ -1,6 +1,6 @@
 # Current state
 
-Phase: `0.1.0-alpha.2` release candidate locally validated.
+Phase: `0.1.0-alpha.3` diagnostics milestone locally validated.
 
 Published on 2026-08-10: `main` is synchronized with GitHub and prerelease `v0.1.0-alpha.2` includes the validated Windows x64 portable artifact.
 
@@ -11,5 +11,9 @@ Evidence on 2026-08-09: lint, formatting, typecheck, 8 Vitest tests, 3 Playwrigh
 Evidence on 2026-08-10: the loader now follows `CreateScene()` in `source/main.brs`, a multi-component regression fixture passes, bracketed Roku coordinate arrays parse correctly, and CLI validation of `C:\Users\Hans Braga\Desktop\IEB\roku` returns `OK IEDB (49 warnings)`. Those warnings describe unsupported alpha renderer/runtime features and remain compatibility work.
 
 The alpha.2 full gate passed: formatting, lint, typecheck, 10 Vitest tests, 3 Playwright tests, all 7 workspace builds, dependency audit, and Windows packaging. Portable artifact: 98,007,347 bytes; SHA-256 `A6D43F5F4057C34CEEDF620A8EB3466A22DF3A905B5309A5C33355043E38F48C`; Authenticode status `NotSigned`.
+
+Evidence on 2026-08-10 for alpha.3: repeated unsupported SceneGraph types are grouped by count and unsupported BrightScript lines are grouped into source ranges. Direct IEDB validation remains successful and now reports 5 actionable diagnostics instead of 49 repetitive warnings. Unit tests, typecheck, lint, and all workspace builds passed before the final package gate.
+
+The alpha.3 full gate passed: formatting, lint, typecheck, 12 Vitest tests, 3 Playwright tests plus a post-package smoke, all 7 workspace builds, dependency audit, direct IEDB validation, and Windows packaging. Portable artifact: 98,008,189 bytes; SHA-256 `CE8CEC10C838B4966098A0E994608519D747EE1B3A7CE15BAF52F1B9618A5481`; Authenticode status `NotSigned`.
 
 Not implemented: general BrightScript compatibility, observers, partial reload, network/player/debugger, signed installers, macOS/Linux artifacts, and physical Roku integration. Final behavior on Roku hardware is not validated. The Windows artifact is portable but not certificate-signed. Monaco's current main bundle is 2.83 MB before gzip and should be split in a future performance cycle.
