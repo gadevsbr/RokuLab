@@ -10,10 +10,35 @@ const arrayFields = new Set(['translation', 'scale']);
 
 function valueOf(key: string, value: unknown): unknown {
   if (typeof value !== 'string') return value;
-  if (arrayFields.has(key)) return value.split(',').map((part) => Number(part.trim()));
+  if (arrayFields.has(key))
+    return value
+      .replace(/^\s*\[/, '')
+      .replace(/\]\s*$/, '')
+      .split(',')
+      .map((part) => Number(part.trim()));
   if (value === 'true' || value === 'false') return value === 'true';
   if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
   return value;
+}
+
+export function parseComponentDescriptor(xml: string): {
+  name?: string;
+  extends?: string;
+} {
+  try {
+    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' });
+    const component = (parser.parse(xml) as { component?: Record<string, unknown> }).component;
+    if (!component) throw new SceneGraphParseError('XML does not contain a component');
+    const name = component['@_name'];
+    const extended = component['@_extends'];
+    return {
+      ...(typeof name === 'string' ? { name } : {}),
+      ...(typeof extended === 'string' ? { extends: extended } : {}),
+    };
+  } catch (error) {
+    if (error instanceof SceneGraphParseError) throw error;
+    throw new SceneGraphParseError(error instanceof Error ? error.message : String(error));
+  }
 }
 
 function convert(entry: Record<string, unknown>): SceneNodeData {

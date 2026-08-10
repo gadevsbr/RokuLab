@@ -10,6 +10,10 @@ describe('SceneGraph vertical slice', () => {
     expect(findNode(parsed.scene, 'title')?.properties.translation).toEqual([10, 20]);
     expect(parsed.scriptUris).toEqual(['pkg:/components/Demo.brs']);
   });
+  it('parses Roku bracketed translation arrays', () => {
+    const parsed = parseSceneGraph(xml.replace('10,20', '[10,20]'));
+    expect(findNode(parsed.scene, 'title')?.properties.translation).toEqual([10, 20]);
+  });
   it('runs init print and literal field assignment', () => {
     const { scene } = parseSceneGraph(xml);
     const result = runInit(

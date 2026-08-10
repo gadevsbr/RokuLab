@@ -2,7 +2,7 @@ import { lstat, readFile, readdir, realpath, stat, writeFile } from 'node:fs/pro
 import path from 'node:path';
 import { runInit } from '@rokulab/brightscript-runtime';
 import { parseManifest } from '@rokulab/manifest-parser';
-import { parseSceneGraph } from '@rokulab/scenegraph';
+import { parseComponentDescriptor, parseSceneGraph } from '@rokulab/scenegraph';
 import type { ProjectEntry, ProjectFileContent, ProjectSnapshot } from '@rokulab/shared';
 
 const allowedRoots = new Set(['source', 'components', 'images', 'fonts', 'locale']);
@@ -91,20 +91,49 @@ async function tree(root: string, current = ''): Promise<ProjectEntry[]> {
   return result;
 }
 
-function findFirst(entries: ProjectEntry[], suffix: string): string | undefined {
-  for (const entry of entries) {
-    if (entry.kind === 'file' && entry.path.endsWith(suffix)) return entry.path;
-    const nested = entry.children && findFirst(entry.children, suffix);
-    if (nested) return nested;
+function findAll(entries: ProjectEntry[], suffix: string): string[] {
+  return entries.flatMap((entry) => [
+    ...(entry.kind === 'file' && entry.path.toLowerCase().endsWith(suffix) ? [entry.path] : []),
+    ...(entry.children ? findAll(entry.children, suffix) : []),
+  ]);
+}
+
+async function entrySceneName(rootPath: string): Promise<string | undefined> {
+  try {
+    const main = await readFile(within(rootPath, 'source/main.brs'), 'utf8');
+    return /CreateScene\s*\(\s*["']([^"']+)["']\s*\)/i.exec(main)?.[1];
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT') return undefined;
+    throw error;
   }
-  return undefined;
+}
+
+async function selectSceneGraph(
+  rootPath: string,
+  files: ProjectEntry[],
+): Promise<string | undefined> {
+  const candidates = await Promise.all(
+    findAll(files, '.xml').map(async (relative) => {
+      const xml = await readFile(within(rootPath, relative), 'utf8');
+      return { relative, descriptor: parseComponentDescriptor(xml) };
+    }),
+  );
+  const requested = await entrySceneName(rootPath);
+  if (requested) {
+    const match = candidates.find(({ descriptor }) => descriptor.name === requested);
+    if (!match) throw new Error(`Entry SceneGraph component "${requested}" was not found`);
+    return match.relative;
+  }
+  return candidates.find(({ descriptor }) => descriptor.extends?.toLowerCase() === 'scene')
+    ?.relative;
 }
 
 export async function loadProject(inputPath: string): Promise<ProjectSnapshot> {
   const rootPath = await realpath(path.resolve(inputPath));
   const manifest = parseManifest(await readFile(within(rootPath, 'manifest'), 'utf8'));
   const files = await tree(rootPath);
-  const xmlPath = findFirst(files, '.xml');
+  const xmlPath = await selectSceneGraph(rootPath, files);
   if (!xmlPath)
     return {
       rootPath,

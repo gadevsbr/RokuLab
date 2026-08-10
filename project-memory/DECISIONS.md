@@ -10,3 +10,4 @@
 - 2026-08-09: Monaco and workers are bundled locally; CDN loading is superseded because it violates local-first behavior and CSP.
 - 2026-08-09: first hot reload implementation replaces the full project snapshot after a debounced change; partial invalidation remains future work.
 - 2026-08-09: Electron main/preload are bundled before packaging so release artifacts do not depend on monorepo workspace links.
+- 2026-08-10: the project entry component follows `CreateScene()` from `source/main.brs`; alphabetical first-XML selection is superseded because Roku channels commonly place nonvisual Task components before their Scene.

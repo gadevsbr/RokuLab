@@ -21,6 +21,26 @@ describe('hello-world fixture', () => {
     );
     await expect(loadProject(root)).rejects.toThrow('escapes the selected root');
   });
+  it('loads the component named by CreateScene instead of the first XML file', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'rokulab-entry-scene-'));
+    await mkdir(path.join(root, 'source'));
+    await mkdir(path.join(root, 'components'));
+    await writeFile(path.join(root, 'manifest'), 'title=Multi component');
+    await writeFile(
+      path.join(root, 'source', 'main.brs'),
+      'sub Main()\n screen.CreateScene("MainScene")\nend sub',
+    );
+    await writeFile(
+      path.join(root, 'components', 'ApiTask.xml'),
+      '<component name="ApiTask" extends="Task"><interface/></component>',
+    );
+    await writeFile(
+      path.join(root, 'components', 'MainScene.xml'),
+      '<component name="MainScene" extends="Scene"><children><Group id="main"/></children></component>',
+    );
+    const project = await loadProject(root);
+    expect(project.scene?.id).toBe('main');
+  });
   it('reads and explicitly saves editable project files', async () => {
     const root = await mkdtemp(path.join(tmpdir(), 'rokulab-edit-'));
     await mkdir(path.join(root, 'source'));

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.2 - 2026-08-10
+
+- Resolve the entry SceneGraph component from `CreateScene()` instead of opening the first XML file.
+- Support bracketed Roku `translation` and `scale` arrays.
+- Add a multi-component channel regression test and validate loading against the IEDB Roku channel.
+
 ## 0.1.0-alpha.1 - 2026-08-09
 
 - Add a locally bundled Monaco editor for Roku text sources.

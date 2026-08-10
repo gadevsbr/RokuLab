@@ -1,9 +1,10 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const workspace = path.resolve(import.meta.dirname, '..');
 const desktop = path.join(workspace, 'apps', 'desktop');
 const staging = path.join(desktop, 'package-app');
+const desktopPackage = JSON.parse(await readFile(path.join(desktop, 'package.json'), 'utf8'));
 
 if (path.dirname(staging) !== desktop || path.basename(staging) !== 'package-app') {
   throw new Error('Refusing to recreate an unexpected staging directory');
@@ -28,7 +29,7 @@ await writeFile(
   `${JSON.stringify(
     {
       name: 'rokulab-desktop',
-      version: '0.1.0-alpha.1',
+      version: desktopPackage.version,
       description: 'The missing development environment for Roku.',
       author: 'RokuLab contributors',
       license: 'MIT',

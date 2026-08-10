@@ -1,5 +1,13 @@
 # Session log
 
+## 2026-08-10
+
+- Reproduced the IEDB channel failure: the loader selected `ApiTask.xml` alphabetically and aborted because a Task component has no visual children.
+- Changed entry discovery to follow `CreateScene("MainScene")`, with a Scene-component fallback when no bootstrap declaration exists.
+- Added bracketed `translation`/`scale` parsing and a regression test for channels containing Task and Scene XML components.
+- The alpha.2 final gate passed: formatting, lint, typecheck, 10 Vitest tests, 3 Playwright tests, 7 workspace builds, dependency audit, direct IEDB CLI validation, and Windows packaging.
+- Fixed staging to inherit the desktop package version instead of hard-coding alpha.1. Alpha.2 portable size: 98,007,347 bytes; SHA-256: `A6D43F5F4057C34CEEDF620A8EB3466A22DF3A905B5309A5C33355043E38F48C`; Authenticode: `NotSigned`.
+
 ## 2026-08-09
 
 - Confirmed an empty repository baseline, Node 24/Corepack availability, absent Git remote, and absent GitHub CLI.
