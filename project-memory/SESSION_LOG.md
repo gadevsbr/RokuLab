@@ -7,6 +7,7 @@
 - Added bracketed `translation`/`scale` parsing and a regression test for channels containing Task and Scene XML components.
 - The alpha.2 final gate passed: formatting, lint, typecheck, 10 Vitest tests, 3 Playwright tests, 7 workspace builds, dependency audit, direct IEDB CLI validation, and Windows packaging.
 - Fixed staging to inherit the desktop package version instead of hard-coding alpha.1. Alpha.2 portable size: 98,007,347 bytes; SHA-256: `A6D43F5F4057C34CEEDF620A8EB3466A22DF3A905B5309A5C33355043E38F48C`; Authenticode: `NotSigned`.
+- Pushed the alpha.1 and alpha.2 commits to `gadevsbr/RokuLab` and published prerelease `v0.1.0-alpha.2` with the validated Windows artifact.
 
 ## 2026-08-09
 
