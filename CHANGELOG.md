@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.4 - 2026-08-10
+
+- Execute safe linear BrightScript subroutines called by `init()` while leaving control-flow routines explicitly unsupported.
+- Resolve `m.variable = m.top.FindNode(...)` aliases and capture `ObserveField` registrations.
+- Expose runtime observers and selected SceneGraph node properties in the desktop Inspector.
+- Discover 32 observer bindings in the real IEDB channel with reproducible tests.
+
 ## 0.1.0-alpha.3 - 2026-08-10
 
 - Group repeated unsupported SceneGraph nodes by type and count.

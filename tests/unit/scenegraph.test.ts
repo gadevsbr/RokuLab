@@ -22,6 +22,36 @@ describe('SceneGraph vertical slice', () => {
     );
     expect(result.console[0]?.message).toBe('ready');
     expect(findNode(scene, 'title')?.properties.text).toBe('New');
+    expect(result.observers).toEqual([]);
+  });
+  it('executes linear bind routines and records observers', () => {
+    const { scene } = parseSceneGraph(xml);
+    const result = runInit(
+      'sub init()\n bindNodes()\n bindObservers()\nend sub\n' +
+        'sub bindNodes()\n m.title = m.top.FindNode("title")\nend sub\n' +
+        'sub bindObservers()\n m.title.ObserveField("text", "onTitleChanged")\nend sub',
+      scene,
+      'Demo.brs',
+    );
+    expect(result.warnings).toEqual([]);
+    expect(result.observers).toEqual([
+      {
+        nodeId: 'title',
+        field: 'text',
+        handler: 'onTitleChanged',
+        source: 'Demo.brs',
+        line: 9,
+      },
+    ]);
+  });
+  it('does not execute routines containing control flow', () => {
+    const { scene } = parseSceneGraph(xml);
+    const result = runInit(
+      'sub init()\n conditionalWork()\nend sub\nsub conditionalWork()\n if true\n  print "wrong"\n end if\nend sub',
+      scene,
+    );
+    expect(result.console).toEqual([]);
+    expect(result.warnings).toEqual(['Unsupported BrightScript statements at component.brs:2']);
   });
   it('groups unsupported BrightScript statements into source ranges', () => {
     const { scene } = parseSceneGraph(xml);

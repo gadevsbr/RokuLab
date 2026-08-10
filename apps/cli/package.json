@@ -1,6 +1,6 @@
 {
   "name": "@rokulab/cli",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "type": "module",
   "bin": {
     "rokulab": "dist/index.js"

@@ -23,6 +23,14 @@ export interface ConsoleEntry {
   line?: number;
 }
 
+export interface RuntimeObserver {
+  nodeId: string;
+  field: string;
+  handler: string;
+  source: string;
+  line: number;
+}
+
 export interface ProjectSnapshot {
   rootPath: string;
   manifest: Manifest;
@@ -30,6 +38,7 @@ export interface ProjectSnapshot {
   scene?: SceneNodeData;
   console: ConsoleEntry[];
   warnings: string[];
+  observers: RuntimeObserver[];
 }
 
 export interface ProjectFileContent {

@@ -112,6 +112,25 @@ function collectFocusable(node?: SceneNodeData): string[] {
     : [];
 }
 
+function findSceneNode(
+  node: SceneNodeData | undefined,
+  id: string | undefined,
+): SceneNodeData | undefined {
+  if (!node || !id) return undefined;
+  if (node.id === id) return node;
+  for (const child of node.children) {
+    const found = findSceneNode(child, id);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function displayProperty(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (value === undefined) return '';
+  return JSON.stringify(value);
+}
+
 const prepareMonaco: BeforeMount = (monaco) => {
   if (monaco.languages.getLanguages().some(({ id }: { id: string }) => id === 'brightscript'))
     return;
@@ -155,6 +174,10 @@ export function App() {
   const [focusIndex, setFocusIndex] = useState(0);
   const projectRoot = project?.rootPath;
   const focusable = useMemo(() => collectFocusable(project?.scene), [project]);
+  const inspectedNode = useMemo(
+    () => findSceneNode(project?.scene, selectedNode),
+    [project?.scene, selectedNode],
+  );
 
   const open = async (demo = false) => {
     try {
@@ -366,6 +389,34 @@ export function App() {
             <SceneTree node={project.scene} selected={selectedNode} onSelect={setSelectedNode} />
           </ul>
         )}
+        {inspectedNode && (
+          <>
+            <h2>PROPERTIES #{inspectedNode.id}</h2>
+            <dl>
+              <dt>type</dt>
+              <dd>{inspectedNode.type}</dd>
+            </dl>
+            <dl>
+              <dt>focusable</dt>
+              <dd>{String(inspectedNode.focusable)}</dd>
+            </dl>
+            {Object.entries(inspectedNode.properties).map(([key, value]) => (
+              <dl key={key}>
+                <dt>{key}</dt>
+                <dd title={displayProperty(value)}>{displayProperty(value)}</dd>
+              </dl>
+            ))}
+          </>
+        )}
+        <h2>OBSERVERS ({project.observers.length})</h2>
+        {project.observers.map((observer) => (
+          <dl key={`${observer.nodeId}-${observer.field}-${observer.handler}`}>
+            <dt>
+              #{observer.nodeId}.{observer.field}
+            </dt>
+            <dd>{observer.handler}</dd>
+          </dl>
+        ))}
         <h2>MANIFEST</h2>
         {Object.entries(project.manifest).map(([key, value]) => (
           <dl key={key}>

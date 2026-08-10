@@ -37,12 +37,15 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     await expect(window.getByText('RokuLab Hello World').first()).toBeVisible();
     await expect(window.getByText('Hello from RokuLab')).toBeVisible();
     await expect(window.getByText('Hello from BrightScript')).toBeVisible();
+    await window.getByRole('button', { name: 'Label #title' }).click();
+    await expect(window.getByRole('heading', { name: 'PROPERTIES #title' })).toBeVisible();
+    await expect(window.getByTitle('Hello from RokuLab')).toBeVisible();
     await writeFile(
       scriptPath,
       'sub init()\n  print "Hot reload verified"\n  m.top.findNode("title").text = "Hot Reload Works"\nend sub\n',
     );
     await expect(window.getByText('Hot reloaded components/MainScene.brs')).toBeVisible();
-    await expect(window.getByText('Hot Reload Works')).toBeVisible();
+    await expect(window.locator('[data-node="title"]')).toHaveText('Hot Reload Works');
     await expect(window.getByText('Hot reload verified')).toBeVisible();
     await window.getByRole('button', { name: '. MainScene.brs' }).click();
     await expect(window.getByRole('button', { name: 'components/MainScene.brs' })).toBeVisible();
