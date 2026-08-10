@@ -1,12 +1,15 @@
 {
   "name": "rokulab",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "private": true,
   "type": "module",
   "description": "The missing development environment for Roku.",
   "license": "MIT",
   "packageManager": "pnpm@10.15.0",
   "pnpm": {
+    "overrides": {
+      "dompurify": "3.4.13"
+    },
     "onlyBuiltDependencies": [
       "electron",
       "esbuild"
@@ -22,7 +25,8 @@
     "test:e2e": "playwright test",
     "typecheck": "corepack pnpm -r typecheck",
     "lint": "eslint .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "package:win": "corepack pnpm --filter @rokulab/desktop package:win"
   },
   "devDependencies": {
     "@eslint/js": "9.35.0",

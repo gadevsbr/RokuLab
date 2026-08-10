@@ -12,3 +12,4 @@ Thumbs.db
 .rokulab/
 apps/desktop/release/
 apps/desktop/dist-electron/
+apps/desktop/package-app/

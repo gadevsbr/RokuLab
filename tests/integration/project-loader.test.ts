@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { loadProject } from '@rokulab/project-loader';
+import { loadProject, readProjectFile, writeProjectFile } from '@rokulab/project-loader';
 
 describe('hello-world fixture', () => {
   it('loads a runnable project snapshot', async () => {
@@ -20,5 +20,28 @@ describe('hello-world fixture', () => {
       '<component name="Scene" extends="Scene"><script uri="pkg:/../outside.brs"/><children><Scene/></children></component>',
     );
     await expect(loadProject(root)).rejects.toThrow('escapes the selected root');
+  });
+  it('reads and explicitly saves editable project files', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'rokulab-edit-'));
+    await mkdir(path.join(root, 'source'));
+    await writeFile(path.join(root, 'manifest'), 'title=Editable');
+    await writeFile(path.join(root, 'source', 'main.brs'), 'sub Main()\nend sub');
+    const opened = await readProjectFile(root, 'source/main.brs');
+    expect(opened.language).toBe('brightscript');
+    await writeProjectFile(root, 'source/main.brs', 'sub Main()\n print "saved"\nend sub');
+    expect((await readProjectFile(root, 'source/main.brs')).content).toContain('saved');
+  });
+  it('blocks hidden areas, traversal, unsupported writes, and oversized content', async () => {
+    const root = await mkdtemp(path.join(tmpdir(), 'rokulab-safe-edit-'));
+    await mkdir(path.join(root, 'source'));
+    await writeFile(path.join(root, 'manifest'), 'title=Safe');
+    await writeFile(path.join(root, 'secret.txt'), 'secret');
+    await writeFile(path.join(root, 'source', 'asset.png'), 'not an image');
+    await expect(readProjectFile(root, 'secret.txt')).rejects.toThrow('outside the readable');
+    await expect(readProjectFile(root, '../outside.txt')).rejects.toThrow('outside the readable');
+    await expect(writeProjectFile(root, 'source/asset.png', 'data')).rejects.toThrow('read-only');
+    await expect(writeProjectFile(root, 'manifest', 'x'.repeat(1024 * 1024 + 1))).rejects.toThrow(
+      '1 MiB',
+    );
   });
 });

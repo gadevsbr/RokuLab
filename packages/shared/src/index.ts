@@ -31,3 +31,14 @@ export interface ProjectSnapshot {
   console: ConsoleEntry[];
   warnings: string[];
 }
+
+export interface ProjectFileContent {
+  path: string;
+  content: string;
+  language: 'brightscript' | 'xml' | 'json' | 'plaintext';
+}
+
+export interface ProjectChange {
+  changedPath: string;
+  snapshot: ProjectSnapshot;
+}

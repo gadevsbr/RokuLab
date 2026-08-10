@@ -1,10 +1,14 @@
-import type { ProjectSnapshot } from '@rokulab/shared';
+import type { ProjectChange, ProjectFileContent, ProjectSnapshot } from '@rokulab/shared';
 declare global {
   interface Window {
     rokulab?: {
       chooseProject(): Promise<ProjectSnapshot | null>;
       openPath(path: string): Promise<ProjectSnapshot>;
       openExample(): Promise<ProjectSnapshot>;
+      readFile(relative: string): Promise<ProjectFileContent>;
+      writeFile(relative: string, content: string): Promise<ProjectFileContent>;
+      onProjectChanged(listener: (change: ProjectChange) => void): () => void;
+      onWatchError(listener: (message: string) => void): () => void;
     };
   }
 }

@@ -7,3 +7,6 @@
 - 2026-08-09: DOM/CSS renderer first, behind package contracts.
 - 2026-08-09: a small explicitly experimental BrightScript subset enables the first demo; mature runtime integration remains an evaluation item.
 - 2026-08-09: `project-memory/` is canonical; the prompt's older `memory/` naming is superseded to match repository governance.
+- 2026-08-09: Monaco and workers are bundled locally; CDN loading is superseded because it violates local-first behavior and CSP.
+- 2026-08-09: first hot reload implementation replaces the full project snapshot after a debounced change; partial invalidation remains future work.
+- 2026-08-09: Electron main/preload are bundled before packaging so release artifacts do not depend on monorepo workspace links.

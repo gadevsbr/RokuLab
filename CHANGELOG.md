@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.1 - 2026-08-09
+
+- Add a locally bundled Monaco editor for Roku text sources.
+- Add explicit saves, `Ctrl+S`, project-scoped file security, and full-project hot reload.
+- Add a bundled Electron main/preload pipeline and Windows x64 portable packaging.
+- Add a RokuLab application icon and packaged-app smoke coverage.
+- Correct corrupted interface glyphs and strengthen Electron navigation/CSP boundaries.
+
 ## 0.1.0-alpha.0 - 2026-08-09
 
 - Bootstrap the RokuLab monorepo, documentation, community files, CI, and agent memory.

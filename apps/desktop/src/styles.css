@@ -147,6 +147,21 @@ button {
 .tree .file {
   color: #8e99a9;
 }
+.file-button {
+  display: block;
+  width: 100%;
+  padding: 3px 5px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.file-button:hover,
+.file-button.active {
+  color: #fff;
+  background: #2c3340;
+}
 .node {
   border: 0;
   background: transparent;
@@ -166,13 +181,49 @@ button {
   position: relative;
   overflow: auto;
   background: #0d1015;
-  padding: 44px 22px 180px;
+  padding: 78px 22px 180px;
+}
+.workspace-tabs {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid #2b313c;
+  background: #151a22;
+}
+.workspace-tabs button {
+  padding: 0 14px;
+  border: 0;
+  border-right: 1px solid #2b313c;
+  background: transparent;
+  color: #8e99a9;
+  cursor: pointer;
+}
+.workspace-tabs button.active {
+  border-top: 2px solid #7569ee;
+  color: #fff;
+  background: #0d1015;
+}
+.workspace-tabs button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.workspace-tabs span {
+  flex: 1;
+}
+.workspace-tabs .save {
+  border-left: 1px solid #2b313c;
+  color: #a79fff;
 }
 .display-toolbar {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
+  top: 38px;
   height: 34px;
   display: flex;
   align-items: center;
@@ -181,6 +232,10 @@ button {
   color: #737d8c;
   font-size: 10px;
   border-bottom: 1px solid #232934;
+}
+.editor-shell {
+  position: absolute;
+  inset: 38px 0 0;
 }
 .tv {
   aspect-ratio: 16/9;

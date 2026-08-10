@@ -1,4 +1,4 @@
-# RokuLab 📺
+# RokuLab
 
 **The missing development environment for Roku.**
 
@@ -15,21 +15,26 @@ corepack pnpm install
 corepack pnpm dev
 ```
 
-Open `examples/hello-world` from the welcome screen. The initial vertical slice parses its manifest and XML component, displays the project tree, renders supported nodes, runs a deliberately small `init()` subset, captures `print`, and routes keyboard/virtual-remote input.
+Open `examples/hello-world` from the welcome screen. RokuLab parses its manifest and XML component, displays the project tree, renders supported nodes, runs a deliberately small `init()` subset, captures `print`, and routes keyboard/virtual-remote input. Text sources open in the bundled Monaco editor and saving triggers a safe full-project hot reload.
 
 ## Current status
 
-| Feature                        | Status                 |
-| ------------------------------ | ---------------------- |
-| Project/manifest loading       | ✅ Supported           |
-| SceneGraph XML and basic nodes | 🟡 Partial             |
-| BrightScript `init()`/`print`  | 🧪 Experimental subset |
-| Virtual remote and focus       | 🟡 Partial             |
-| Hot reload                     | 🚧 Planned             |
-| Network/player/debugger        | 🚧 Planned             |
-| Physical Roku deploy           | 🚧 Planned             |
+| Feature                        | Status              |
+| ------------------------------ | ------------------- |
+| Project/manifest loading       | Supported           |
+| SceneGraph XML and basic nodes | Partial             |
+| BrightScript `init()`/`print`  | Experimental subset |
+| Virtual remote and focus       | Partial             |
+| Monaco source editor           | Supported           |
+| Hot reload                     | Full-project reload |
+| Network/player/debugger        | Planned             |
+| Physical Roku deploy           | Planned             |
 
 See [compatibility details](docs/COMPATIBILITY.md), [architecture](docs/ARCHITECTURE.md), and [roadmap](docs/ROADMAP.md).
+
+## Windows package
+
+`corepack pnpm package:win` builds the portable x64 executable under `apps/desktop/release/`. Alpha builds are not certificate-signed yet and may trigger a Windows SmartScreen warning. Published downloads must come from this repository's GitHub Releases page.
 
 ## Privacy and legal boundary
 

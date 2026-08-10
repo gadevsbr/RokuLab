@@ -1,15 +1,17 @@
 # Compatibility
 
-Legend: ✅ supported, 🟡 partial, 🧪 experimental, ❌ unsupported.
+Statuses: supported, partial, experimental, unsupported.
 
-| Surface                                | Status | Notes                                          |
-| -------------------------------------- | ------ | ---------------------------------------------- |
-| manifest                               | ✅     | Key/value parsing, comments, validation        |
-| Scene, Group, Rectangle, Label, Poster | 🟡     | XML fields and child tree                      |
-| `findNode`                             | ✅     | Scene tree ID lookup                           |
-| focus/navigation                       | 🟡     | Focusable node order and directional keys      |
-| BrightScript `init()` and `print`      | 🧪     | Deliberately constrained interpreter           |
-| `m.top.findNode(...).field = value`    | 🧪     | Literal assignment subset                      |
-| observeField                           | ❌     | Planned                                        |
-| roUrlTransfer                          | ❌     | Planned                                        |
-| Video/DRM                              | ❌     | DRM will return `DRM_UNSUPPORTED_IN_SIMULATOR` |
+| Surface                                | Status       | Notes                                           |
+| -------------------------------------- | ------------ | ----------------------------------------------- |
+| manifest                               | supported    | Key/value parsing, comments, validation         |
+| Scene, Group, Rectangle, Label, Poster | partial      | XML fields and child tree                       |
+| `findNode`                             | supported    | Scene tree ID lookup                            |
+| focus/navigation                       | partial      | Focusable node order and directional keys       |
+| BrightScript `init()` and `print`      | experimental | Deliberately constrained interpreter            |
+| `m.top.findNode(...).field = value`    | experimental | Literal assignment subset                       |
+| Monaco source editing                  | supported    | `.brs`, `.xml`, `.json`, `.txt`, and `manifest` |
+| Hot reload                             | supported    | Debounced full-project reload                   |
+| observeField                           | unsupported  | Planned                                         |
+| roUrlTransfer                          | unsupported  | Planned                                         |
+| Video/DRM                              | unsupported  | DRM will return `DRM_UNSUPPORTED_IN_SIMULATOR`  |

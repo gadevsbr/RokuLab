@@ -1,17 +1,22 @@
 {
   "name": "@rokulab/desktop",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "node ../../scripts/dev-desktop.mjs",
-    "build": "vite build && tsc -p tsconfig.electron.json",
+    "build": "vite build && corepack pnpm build:electron",
+    "build:electron": "esbuild electron/main.ts --bundle --platform=node --format=esm --external:electron --outfile=dist-electron/main.js && esbuild electron/preload.cts --bundle --platform=node --format=cjs --external:electron --outfile=dist-electron/preload.cjs",
+    "package:win": "corepack pnpm build && node ../../scripts/stage-desktop.mjs && node ../../scripts/run-electron-builder.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.electron.json --noEmit"
   },
   "dependencies": {
+    "@monaco-editor/react": "4.7.0",
     "@rokulab/project-loader": "workspace:*",
     "@rokulab/shared": "workspace:*",
+    "chokidar": "5.0.0",
+    "monaco-editor": "0.56.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "zustand": "5.0.8"
@@ -21,6 +26,36 @@
     "@types/react-dom": "19.1.9",
     "@vitejs/plugin-react": "6.0.5",
     "electron": "43.3.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
     "vite": "8.2.1"
+  },
+  "build": {
+    "appId": "io.github.gadevsbr.rokulab",
+    "productName": "RokuLab",
+    "asar": true,
+    "npmRebuild": false,
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "examples/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "app": "package-app",
+      "output": "release"
+    },
+    "win": {
+      "icon": "build/icon.svg",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "RokuLab-${version}-windows-${arch}.${ext}"
+    }
   }
 }

@@ -1,15 +1,42 @@
+import Editor, { type BeforeMount } from '@monaco-editor/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ProjectEntry, ProjectSnapshot, SceneNodeData } from '@rokulab/shared';
+import type {
+  ProjectEntry,
+  ProjectFileContent,
+  ProjectSnapshot,
+  SceneNodeData,
+} from '@rokulab/shared';
 
-function FileTree({ entries }: { entries: ProjectEntry[] }) {
+const sourcePattern = /(^manifest$|\.(brs|xml|json|txt)$)/i;
+
+function FileTree({
+  entries,
+  selected,
+  onOpen,
+}: {
+  entries: ProjectEntry[];
+  selected: string | undefined;
+  onOpen(path: string): void;
+}) {
   return (
     <ul className="tree">
       {entries.map((entry) => (
         <li key={entry.path}>
-          <span className={entry.kind}>
-            {entry.kind === 'directory' ? '⌄' : '·'} {entry.name}
-          </span>
-          {entry.children && <FileTree entries={entry.children} />}
+          {entry.kind === 'directory' ? (
+            <span className="directory">v {entry.name}</span>
+          ) : sourcePattern.test(entry.path) ? (
+            <button
+              className={`file file-button ${selected === entry.path ? 'active' : ''}`}
+              onClick={() => onOpen(entry.path)}
+            >
+              . {entry.name}
+            </button>
+          ) : (
+            <span className="file">. {entry.name}</span>
+          )}
+          {entry.children && (
+            <FileTree entries={entry.children} selected={selected} onOpen={onOpen} />
+          )}
         </li>
       ))}
     </ul>
@@ -34,28 +61,17 @@ function SceneTree({
       </button>
       {node.children.length > 0 && (
         <ul className="tree">
-          <SceneTreeList nodes={node.children} selected={selected} onSelect={onSelect} />
+          {node.children.map((child, index) => (
+            <SceneTree
+              key={`${child.id ?? child.type}-${index}`}
+              node={child}
+              selected={selected}
+              onSelect={onSelect}
+            />
+          ))}
         </ul>
       )}
     </li>
-  );
-}
-function SceneTreeList(props: {
-  nodes: SceneNodeData[];
-  selected: string | undefined;
-  onSelect(id: string): void;
-}) {
-  return (
-    <>
-      {props.nodes.map((node, i) => (
-        <SceneTree
-          key={`${node.id ?? node.type}-${i}`}
-          node={node}
-          selected={props.selected}
-          onSelect={props.onSelect}
-        />
-      ))}
-    </>
   );
 }
 
@@ -83,8 +99,8 @@ function RenderNode({ node, focused }: { node: SceneNodeData; focused: string | 
       {node.type === 'Poster' && typeof node.properties.uri === 'string' ? (
         <img src={node.properties.uri} alt="" />
       ) : null}
-      {node.children.map((child, i) => (
-        <RenderNode key={`${child.id ?? child.type}-${i}`} node={child} focused={focused} />
+      {node.children.map((child, index) => (
+        <RenderNode key={`${child.id ?? child.type}-${index}`} node={child} focused={focused} />
       ))}
     </div>
   );
@@ -96,24 +112,91 @@ function collectFocusable(node?: SceneNodeData): string[] {
     : [];
 }
 
+const prepareMonaco: BeforeMount = (monaco) => {
+  if (monaco.languages.getLanguages().some(({ id }: { id: string }) => id === 'brightscript'))
+    return;
+  monaco.languages.register({ id: 'brightscript', extensions: ['.brs'] });
+  monaco.languages.setMonarchTokensProvider('brightscript', {
+    ignoreCase: true,
+    keywords: [
+      'sub',
+      'function',
+      'end',
+      'if',
+      'then',
+      'else',
+      'for',
+      'each',
+      'while',
+      'return',
+      'print',
+    ],
+    tokenizer: {
+      root: [
+        [/'[^$]*/, 'comment'],
+        [/"(?:[^"]|"")*"/, 'string'],
+        [/\b\d+(\.\d+)?\b/, 'number'],
+        [/[a-zA-Z_]\w*/, { cases: { '@keywords': 'keyword', '@default': 'identifier' } }],
+      ],
+    },
+  });
+};
+
 export function App() {
   const [project, setProject] = useState<ProjectSnapshot>();
   const [error, setError] = useState('');
+  const [status, setStatus] = useState('');
   const [bottomTab, setBottomTab] = useState<'Console' | 'Problems'>('Console');
-  const [selected, setSelected] = useState<string>();
-  const focusable = useMemo(() => collectFocusable(project?.scene), [project]);
+  const [workspaceTab, setWorkspaceTab] = useState<'Preview' | 'Editor'>('Preview');
+  const [selectedNode, setSelectedNode] = useState<string>();
+  const [file, setFile] = useState<ProjectFileContent>();
+  const [draft, setDraft] = useState('');
+  const [dirty, setDirty] = useState(false);
   const [focusIndex, setFocusIndex] = useState(0);
+  const projectRoot = project?.rootPath;
+  const focusable = useMemo(() => collectFocusable(project?.scene), [project]);
+
   const open = async (demo = false) => {
     try {
       setError('');
       const value = demo
         ? await window.rokulab?.openExample()
         : await window.rokulab?.chooseProject();
-      if (value) setProject(value);
+      if (value) {
+        setProject(value);
+        setWorkspaceTab('Preview');
+        setFile(undefined);
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : String(reason));
     }
   };
+
+  const openFile = async (relative: string) => {
+    try {
+      const value = await window.rokulab?.readFile(relative);
+      if (!value) return;
+      setFile(value);
+      setDraft(value.content);
+      setDirty(false);
+      setWorkspaceTab('Editor');
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : String(reason));
+    }
+  };
+
+  const save = useCallback(async () => {
+    if (!file || !dirty) return;
+    try {
+      await window.rokulab?.writeFile(file.path, draft);
+      setFile((current) => (current ? { ...current, content: draft } : current));
+      setDirty(false);
+      setStatus(`Saved ${file.path}`);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : String(reason));
+    }
+  }, [draft, dirty, file]);
+
   const move = useCallback(
     (direction: number) =>
       setFocusIndex((current) =>
@@ -121,14 +204,42 @@ export function App() {
       ),
     [focusable.length],
   );
+
   useEffect(() => {
+    const api = window.rokulab;
+    if (!api || !projectRoot) return;
+    const removeChange = api.onProjectChanged((change) => {
+      setProject(change.snapshot);
+      setStatus(`Hot reloaded ${change.changedPath}`);
+      if (file?.path === change.changedPath && !dirty) void openFile(change.changedPath);
+    });
+    const removeError = api.onWatchError(setError);
+    return () => {
+      removeChange();
+      removeError();
+    };
+  }, [dirty, file?.path, projectRoot]);
+
+  useEffect(() => {
+    const key = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        void save();
+      }
+    };
+    window.addEventListener('keydown', key);
+    return () => window.removeEventListener('keydown', key);
+  }, [save]);
+
+  useEffect(() => {
+    if (workspaceTab !== 'Preview') return;
     const key = (event: KeyboardEvent) => {
       if (['ArrowDown', 'ArrowRight'].includes(event.key)) move(1);
       if (['ArrowUp', 'ArrowLeft'].includes(event.key)) move(-1);
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [move]);
+  }, [move, workspaceTab]);
 
   if (!project)
     return (
@@ -143,9 +254,10 @@ export function App() {
           Open bundled Hello World
         </button>
         {error && <div className="error">{error}</div>}
-        <small>Local-first · Early alpha · Final testing still belongs on Roku hardware</small>
+        <small>Local-first | Early alpha | Final testing still belongs on Roku hardware</small>
       </main>
     );
+
   return (
     <main className="workbench">
       <header>
@@ -160,47 +272,98 @@ export function App() {
           </em>
         </span>
         <nav>
-          <button title="Run">▶</button>
+          <button title="Run">Run</button>
           <button
             title="Reload"
             onClick={() => void window.rokulab?.openPath(project.rootPath).then(setProject)}
           >
-            ↻
+            Reload
           </button>
-          <button title="Stop">■</button>
-          <button onClick={() => setProject(undefined)}>Open…</button>
+          <button onClick={() => setProject(undefined)}>Open...</button>
         </nav>
       </header>
       <aside className="explorer">
         <h2>PROJECT</h2>
-        <FileTree entries={project.files} />
+        <FileTree
+          entries={project.files}
+          selected={file?.path}
+          onOpen={(path) => void openFile(path)}
+        />
       </aside>
       <section className="display">
-        <div className="display-toolbar">
-          <span>VIRTUAL ROKU</span>
-          <span>1080p · 100%</span>
+        <div className="workspace-tabs">
+          <button
+            className={workspaceTab === 'Preview' ? 'active' : ''}
+            onClick={() => setWorkspaceTab('Preview')}
+          >
+            Preview
+          </button>
+          <button
+            className={workspaceTab === 'Editor' ? 'active' : ''}
+            disabled={!file}
+            onClick={() => setWorkspaceTab('Editor')}
+          >
+            {file ? `${dirty ? '* ' : ''}${file.path}` : 'Editor'}
+          </button>
+          <span />
+          {workspaceTab === 'Editor' && (
+            <button className="save" disabled={!dirty} onClick={() => void save()}>
+              Save
+            </button>
+          )}
         </div>
-        <div className="tv">
-          <div className="screen">
-            {project.scene && <RenderNode node={project.scene} focused={focusable[focusIndex]} />}
+        {workspaceTab === 'Preview' ? (
+          <>
+            <div className="display-toolbar">
+              <span>VIRTUAL ROKU</span>
+              <span>1080p | 100%</span>
+            </div>
+            <div className="tv">
+              <div className="screen">
+                {project.scene && (
+                  <RenderNode node={project.scene} focused={focusable[focusIndex]} />
+                )}
+              </div>
+            </div>
+            <div className="remote">
+              <button onClick={() => move(-1)}>Up</button>
+              <div>
+                <button onClick={() => move(-1)}>Left</button>
+                <button className="ok">OK</button>
+                <button onClick={() => move(1)}>Right</button>
+              </div>
+              <button onClick={() => move(1)}>Down</button>
+              <small>Arrow keys | Enter | Escape</small>
+            </div>
+          </>
+        ) : file ? (
+          <div className="editor-shell">
+            <Editor
+              path={file.path}
+              language={file.language}
+              value={draft}
+              theme="vs-dark"
+              beforeMount={prepareMonaco}
+              onChange={(value) => {
+                setDraft(value ?? '');
+                setDirty((value ?? '') !== file.content);
+              }}
+              options={{
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 13,
+                tabSize: 2,
+                wordWrap: 'on',
+              }}
+            />
           </div>
-        </div>
-        <div className="remote">
-          <button onClick={() => move(-1)}>↑</button>
-          <div>
-            <button onClick={() => move(-1)}>←</button>
-            <button className="ok">OK</button>
-            <button onClick={() => move(1)}>→</button>
-          </div>
-          <button onClick={() => move(1)}>↓</button>
-          <small>Keyboard arrows · Enter · Escape</small>
-        </div>
+        ) : null}
       </section>
       <aside className="inspector">
         <h2>SCENEGRAPH</h2>
         {project.scene && (
           <ul className="tree">
-            <SceneTree node={project.scene} selected={selected} onSelect={setSelected} />
+            <SceneTree node={project.scene} selected={selectedNode} onSelect={setSelectedNode} />
           </ul>
         )}
         <h2>MANIFEST</h2>
@@ -225,13 +388,14 @@ export function App() {
           >
             Problems <b>{project.warnings.length}</b>
           </button>
-          <span />
-          <button>Clear</button>
+          <span>{status}</span>
+          <button onClick={() => setStatus('')}>Clear status</button>
         </div>
         <div className="output">
+          {error && <p className="error">ERROR {error}</p>}
           {bottomTab === 'Console'
-            ? project.console.map((entry, i) => (
-                <p key={i}>
+            ? project.console.map((entry, index) => (
+                <p key={index}>
                   <time>{entry.timestamp.slice(11, 19)}</time> <mark>INFO</mark>{' '}
                   <code>
                     {entry.source}:{entry.line}
@@ -239,9 +403,9 @@ export function App() {
                   {entry.message}
                 </p>
               ))
-            : project.warnings.map((warning, i) => (
-                <p key={i} className="warning">
-                  ⚠ {warning}
+            : project.warnings.map((warning, index) => (
+                <p key={index} className="warning">
+                  WARNING {warning}
                 </p>
               ))}
         </div>
