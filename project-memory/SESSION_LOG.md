@@ -5,6 +5,7 @@
 - Grouped repeated unsupported SceneGraph node diagnostics and collapsed unsupported BrightScript lines into source ranges.
 - Direct IEDB validation now reports 5 diagnostics instead of 49 warnings without classifying unsupported behavior as supported.
 - Alpha.3 passed formatting, lint, typecheck, 12 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, dependency audit, and direct IEDB validation. Portable size: 98,008,189 bytes; SHA-256: `CE8CEC10C838B4966098A0E994608519D747EE1B3A7CE15BAF52F1B9618A5481`; Authenticode: `NotSigned`.
+- Published prerelease `v0.1.0-alpha.3` with the validated Windows artifact and synchronized `main` with GitHub.
 
 - Reproduced the IEDB channel failure: the loader selected `ApiTask.xml` alphabetically and aborted because a Task component has no visual children.
 - Changed entry discovery to follow `CreateScene("MainScene")`, with a Scene-component fallback when no bootstrap declaration exists.

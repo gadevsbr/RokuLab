@@ -2,6 +2,8 @@
 
 Phase: `0.1.0-alpha.3` diagnostics milestone locally validated.
 
+Published on 2026-08-10: `main` is synchronized with GitHub and prerelease `v0.1.0-alpha.3` contains the validated Windows x64 portable artifact.
+
 Published on 2026-08-10: `main` is synchronized with GitHub and prerelease `v0.1.0-alpha.2` includes the validated Windows x64 portable artifact.
 
 Working now: pnpm monorepo, Electron welcome/workbench, secure folder picker/preload boundary, manifest/project tree, basic SceneGraph parser/DOM renderer, `findNode`, experimental `init()`/`print`, virtual directional focus, console/problems/manifest panels, locally bundled Monaco editing, explicit save, debounced full-project hot reload, CLI inspect/validate, bundled hello-world project, and a Windows x64 portable build.
