@@ -1,0 +1,26 @@
+{
+  "name": "@rokulab/desktop",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "node ../../scripts/dev-desktop.mjs",
+    "build": "vite build && tsc -p tsconfig.electron.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.electron.json --noEmit"
+  },
+  "dependencies": {
+    "@rokulab/project-loader": "workspace:*",
+    "@rokulab/shared": "workspace:*",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "zustand": "5.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@vitejs/plugin-react": "6.0.5",
+    "electron": "43.3.0",
+    "vite": "8.2.1"
+  }
+}

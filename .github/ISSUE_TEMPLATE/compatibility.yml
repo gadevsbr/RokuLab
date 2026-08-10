@@ -1,0 +1,15 @@
+name: Roku compatibility gap
+description: Report a documented Roku API or SceneGraph behavior mismatch
+body:
+  - type: input
+    id: api
+    attributes: { label: API or node }
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      {
+        label: Documentation or device evidence,
+        description: Link public documentation and provide a minimal fixture.,
+      }
+    validations: { required: true }

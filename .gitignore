@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+.rokulab/
+apps/desktop/release/
+apps/desktop/dist-electron/

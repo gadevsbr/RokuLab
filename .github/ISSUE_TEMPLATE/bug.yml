@@ -1,0 +1,15 @@
+name: Bug report
+description: Report reproducible RokuLab behavior
+body:
+  - type: textarea
+    id: repro
+    attributes: { label: Reproduction, description: Include a minimal project and exact steps. }
+    validations: { required: true }
+  - type: textarea
+    id: expected
+    attributes: { label: Expected and actual behavior }
+    validations: { required: true }
+  - type: input
+    id: platform
+    attributes: { label: OS and RokuLab version }
+    validations: { required: true }

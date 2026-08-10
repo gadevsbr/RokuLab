@@ -1,0 +1,15 @@
+{
+  "name": "@rokulab/cli",
+  "version": "0.1.0-alpha.0",
+  "type": "module",
+  "bin": {
+    "rokulab": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@rokulab/project-loader": "workspace:*"
+  }
+}

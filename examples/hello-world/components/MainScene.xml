@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MainScene" extends="Scene">
+  <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+  <children>
+    <Rectangle id="background" width="1920" height="1080" color="#101a2d">
+      <Label id="title" translation="520,360" text="Loading RokuLab…" color="#f5f7fb" />
+      <Label id="subtitle" translation="600,430" text="SceneGraph on your computer" color="#8e9bb0" />
+      <Button id="start" translation="820,530" text="Start" focusable="true" />
+    </Rectangle>
+  </children>
+</component>
+
