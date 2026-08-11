@@ -59,12 +59,14 @@ Already delivered:
 - an observer fixture proving one field change invokes its callback exactly once.
 - a live node registry that correlates Worker addresses across updates, adopts component IDs and
   subtypes when emitted, maintains current field snapshots, and exposes selectable live properties.
+- hierarchical live nodes derived only from serialized `_children_` relations, guarded against
+  circular references, with parent identity and absolute bounds when geometry fields are available.
 
 Remaining integration work before 0.2 can close:
 
-- extend the stable live-address registry into a hierarchical parent/child tree with focus chain,
-  observer-call correlation, source stack, and layout bounds; IDs remain address-backed when the
-  engine does not emit a component `id`;
+- extend the stable hierarchical live-address registry with focus chain, observer-call correlation,
+  and source stack; bounds remain explicitly unavailable when geometry fields are not emitted, and
+  IDs remain address-backed when the engine does not emit a component `id`;
 - add validated Inspector field editing and transient overrides against the live engine;
 - classify unsupported engine behavior explicitly instead of falling back silently to the
   legacy preview; the legacy parser remains a pre-run inspection surface only.

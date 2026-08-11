@@ -2,6 +2,9 @@
 
 ## Active
 
+- 2026-08-11: live hierarchy accepts only serialized `_children_`/recognized child collections and rejects ancestry cycles. `focusedChild` and ordinary node-valued fields are references, not structural parentage. Bounds are computed from emitted dimensions and ancestor translations or shown as unavailable.
+- Alpha.13 passed formatting, lint, typecheck, 23 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests. Portable size: 107,898,990 bytes; SHA-256: `D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC`; Authenticode: `NotSigned`.
+
 - 2026-08-11: live runtime identity is anchored to Worker type/address and enriched with component `id` and subtype when emitted. Guessing IDs or hierarchy from update order is rejected; missing engine metadata remains explicit until a reliable relation is observed.
 - Alpha.12 passed formatting, lint, typecheck, 20 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests including live-node inspection in IEDB. Portable size: 107,899,164 bytes; SHA-256: `13AFB920C0821923AC76C80DF99EC7E13F6279BBC8DAF4AF973EC9770D6E8C9E`; Authenticode: `NotSigned`.
 

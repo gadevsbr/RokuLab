@@ -2,6 +2,8 @@
 
 ## 2026-08-11
 
+- Added cycle-safe live SceneGraph hierarchy and geometry inspection from serialized Worker metadata.
+
 - Added stable live Worker node correlation and selectable live field snapshots to the Inspector without inventing unavailable hierarchy metadata.
 
 - Added the mature BrightScript/SceneGraph compatibility runtime, project archiving, isolated custom Electron protocol, canvas rendering, engine console, and remote/media controls.

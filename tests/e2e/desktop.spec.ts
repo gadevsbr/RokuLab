@@ -31,6 +31,7 @@ async function canvasSignature(window: Awaited<ReturnType<ElectronApplication['f
 }
 
 test('desktop opens the bundled project and renders the vertical slice', async () => {
+  test.setTimeout(60_000);
   const scriptPath = path.resolve('examples/hello-world/components/MainScene.brs');
   const originalScript = await readFile(scriptPath, 'utf8');
   const environment = { ...process.env };

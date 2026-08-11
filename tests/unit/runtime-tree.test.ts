@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyRuntimeUpdate,
+  runtimeNodeBounds,
+  runtimeNodeChildren,
   runtimeNodeLabel,
   visibleRuntimeFields,
 } from '../../apps/desktop/src/runtime-tree';
@@ -46,5 +48,67 @@ describe('live runtime node correlation', () => {
     });
 
     expect(removed[0]).toMatchObject({ fields: {}, updates: 2 });
+  });
+
+  it('uses serialized child references for hierarchy and absolute bounds', () => {
+    let nodes = applyRuntimeUpdate([], {
+      action: 'set',
+      address: 'scene',
+      key: 'translation',
+      type: 'scene',
+      value: [100, 40],
+    });
+    nodes = applyRuntimeUpdate(nodes, {
+      action: 'set',
+      address: 'scene',
+      key: 'children',
+      type: 'scene',
+      value: [
+        {
+          _node_: 'roSGNode:Label',
+          _address_: 'label',
+          id: 'headline',
+          translation: [20, 10],
+          width: 300,
+          height: 50,
+          _children_: [],
+        },
+      ],
+    });
+
+    const child = runtimeNodeChildren(nodes, 'scene')[0]!;
+    expect(child).toMatchObject({ address: 'label', nodeId: 'headline', subtype: 'Label' });
+    expect(runtimeNodeBounds(nodes, child)).toEqual({ x: 120, y: 50, width: 300, height: 50 });
+  });
+
+  it('does not invent parent relations for ordinary node-valued fields', () => {
+    const nodes = applyRuntimeUpdate([], {
+      action: 'set',
+      address: 'scene',
+      key: 'focusedChild',
+      type: 'scene',
+      value: { _node_: 'roSGNode:Button', _address_: 'button' },
+    });
+
+    expect(nodes.find(({ address }) => address === 'button')?.parentAddress).toBeUndefined();
+  });
+
+  it('rejects circular serialized child references', () => {
+    const nodes = applyRuntimeUpdate([], {
+      action: 'set',
+      address: 'scene',
+      key: 'children',
+      type: 'scene',
+      value: [
+        {
+          _node_: 'roSGNode:Group',
+          _address_: 'group',
+          _children_: [{ _circular_: 'roSGNode:Scene', _address_: 'scene' }],
+        },
+      ],
+    });
+
+    expect(nodes.find(({ address }) => address === 'scene')?.parentAddress).toBeUndefined();
+    expect(nodes.find(({ address }) => address === 'group')?.parentAddress).toBe('scene');
   });
 });

@@ -15,6 +15,8 @@ import {
 } from './compatibility-engine';
 import {
   applyRuntimeUpdate,
+  runtimeNodeBounds,
+  runtimeNodeChildren,
   runtimeNodeLabel,
   visibleRuntimeFields,
   type RuntimeNode,
@@ -110,6 +112,51 @@ function SceneTree({
         </ul>
       )}
     </li>
+  );
+}
+
+function LiveRuntimeTree({
+  nodes,
+  parent,
+  selected,
+  onSelect,
+  ancestors = [],
+}: {
+  nodes: RuntimeNode[];
+  parent?: string;
+  selected: string | undefined;
+  onSelect(address: string): void;
+  ancestors?: string[];
+}) {
+  const children = runtimeNodeChildren(nodes, parent).filter(
+    ({ address }) => !ancestors.includes(address),
+  );
+  return (
+    <>
+      {children.map((node) => (
+        <li key={node.stableId}>
+          <button
+            className={selected === node.address ? 'active' : ''}
+            title={`${node.type}:${node.address}`}
+            onClick={() => onSelect(node.address)}
+          >
+            <span>{runtimeNodeLabel(node)}</span>
+            <small>{node.updates}</small>
+          </button>
+          {runtimeNodeChildren(nodes, node.address).length > 0 && (
+            <ul className="runtime-tree nested">
+              <LiveRuntimeTree
+                nodes={nodes}
+                parent={node.address}
+                selected={selected}
+                onSelect={onSelect}
+                ancestors={[...ancestors, node.address]}
+              />
+            </ul>
+          )}
+        </li>
+      ))}
+    </>
   );
 }
 
@@ -225,6 +272,11 @@ export function App() {
   const inspectedRuntimeNode = useMemo(
     () => runtimeNodes.find(({ address }) => address === selectedRuntimeNode),
     [runtimeNodes, selectedRuntimeNode],
+  );
+  const inspectedRuntimeBounds = useMemo(
+    () =>
+      inspectedRuntimeNode ? runtimeNodeBounds(runtimeNodes, inspectedRuntimeNode) : undefined,
+    [inspectedRuntimeNode, runtimeNodes],
   );
 
   const open = async (demo = false) => {
@@ -668,18 +720,11 @@ export function App() {
         ))}
         <h2>LIVE NODES ({runtimeNodes.length})</h2>
         <ul className="runtime-tree">
-          {runtimeNodes.map((node) => (
-            <li key={node.stableId}>
-              <button
-                className={selectedRuntimeNode === node.address ? 'active' : ''}
-                title={`${node.type}:${node.address}`}
-                onClick={() => setSelectedRuntimeNode(node.address)}
-              >
-                <span>{runtimeNodeLabel(node)}</span>
-                <small>{node.updates}</small>
-              </button>
-            </li>
-          ))}
+          <LiveRuntimeTree
+            nodes={runtimeNodes}
+            selected={selectedRuntimeNode}
+            onSelect={setSelectedRuntimeNode}
+          />
         </ul>
         {inspectedRuntimeNode && (
           <>
@@ -691,6 +736,20 @@ export function App() {
             <dl>
               <dt>type</dt>
               <dd>{inspectedRuntimeNode.subtype ?? inspectedRuntimeNode.type}</dd>
+            </dl>
+            <dl>
+              <dt>parent</dt>
+              <dd title={inspectedRuntimeNode.parentAddress}>
+                {inspectedRuntimeNode.parentAddress ?? 'root / unknown'}
+              </dd>
+            </dl>
+            <dl>
+              <dt>bounds</dt>
+              <dd>
+                {inspectedRuntimeBounds
+                  ? `${inspectedRuntimeBounds.x}, ${inspectedRuntimeBounds.y} · ${inspectedRuntimeBounds.width} × ${inspectedRuntimeBounds.height}`
+                  : 'unavailable'}
+              </dd>
             </dl>
             {visibleRuntimeFields(inspectedRuntimeNode).map(([key, value]) => (
               <dl key={key}>

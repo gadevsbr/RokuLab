@@ -2,6 +2,10 @@
 
 ## 2026-08-11
 
+- Added cycle-safe live parent/child hierarchy from serialized `_children_` metadata and nested Inspector rendering.
+- Added parent and absolute-bounds inspection, with tests for nested translations, nonstructural `focusedChild`, and circular SceneGraph references; the suite now contains 23 Vitest tests.
+- Generated and validated the unsigned alpha.13 Windows portable (107,898,990 bytes, SHA-256 `D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC`).
+
 - Added address-stable live runtime nodes that adopt emitted IDs/subtypes, retain current field state and removals, count updates, and expose selectable properties in the Inspector.
 - Added two reducer tests plus IEDB E2E evidence that a real live node can be selected and its address/properties inspected; the suite now contains 20 Vitest tests.
 - Generated and validated the unsigned alpha.12 Windows portable (107,899,164 bytes, SHA-256 `13AFB920C0821923AC76C80DF99EC7E13F6279BBC8DAF4AF973EC9770D6E8C9E`).

@@ -527,6 +527,11 @@ button {
   margin: 0;
   padding: 0;
 }
+.runtime-tree.nested {
+  margin-left: 12px;
+  padding-left: 5px;
+  border-left: 1px solid #3b3e44;
+}
 .runtime-tree button {
   width: 100%;
   min-width: 0;

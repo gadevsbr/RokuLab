@@ -1,6 +1,10 @@
 # Current state
 
-Phase: `0.1.0-alpha.12` live runtime node correlation validation and publication.
+Phase: `0.1.0-alpha.13` hierarchical live runtime inspection validation and publication.
+
+Alpha.13 builds parent/child structure only from serialized SceneGraph `_children_` relations, rejects circular back-references, renders nested live nodes, and reports parent identity plus absolute bounds from nested translations and dimensions. Focus chain, observer-call correlation, source stack, and live editing remain open.
+
+Alpha.13 evidence: formatting, lint, typecheck, 23 Vitest tests, dependency audit, all workspace builds, Windows packaging, and all 5 sequential Electron tests passed. Tests cover nested hierarchy/bounds, rejection of `focusedChild` as structural parentage, circular-reference protection, IEDB navigation, packaged execution, and graceful shutdown. Portable artifact: 107,898,990 bytes; SHA-256 `D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC`; Authenticode status `NotSigned`.
 
 Alpha.12 adds an address-stable live node registry over Worker synchronization traffic. It adopts emitted component IDs/subtypes without changing identity, maintains current fields/removals and update counts, and exposes selectable Live Nodes and Live Properties in the Inspector. Parent/child hierarchy, focus chain, observer correlation, source stack, bounds, and live editing remain open.
 
