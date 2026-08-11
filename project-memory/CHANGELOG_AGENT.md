@@ -2,6 +2,9 @@
 
 ## 2026-08-11
 
+- Separated emitted runtime calls from field updates and added strict observer-call correlation
+  plus available call-site source locations to the Inspector.
+
 - Added cycle-safe live focus-chain inspection and highlighting from Worker `focusedChild` metadata.
 
 - Published the Community Preview presentation, reproducible media capture scripts, Discussions, and the public alpha.13 feedback channel.

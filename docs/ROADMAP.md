@@ -22,7 +22,7 @@ Every milestone must include:
 
 Visual-fidelity milestones additionally require reference screenshots at 720p and 1080p, deterministic capture, pixel-difference reporting, and documented tolerances. Behavior that depends on proprietary firmware, codecs, services, or DRM must remain an explicit device-only gate.
 
-## 0.1 — Development baseline (completed)
+## 0.1 ? Development baseline (completed)
 
 - Open a channel folder and parse its manifest and project tree.
 - Resolve the entry SceneGraph component from `CreateScene()`.
@@ -31,7 +31,7 @@ Visual-fidelity milestones additionally require reference screenshots at 720p an
 - Package and smoke-test a portable Windows x64 application.
 - Group compatibility diagnostics by node type and BrightScript source range.
 
-## 0.2 — Reactive SceneGraph runtime (in progress)
+## 0.2 ? Reactive SceneGraph runtime (in progress)
 
 Goal: execute UI-oriented channels deterministically and keep runtime state, SceneGraph fields, rendering, focus, and events synchronized.
 
@@ -63,11 +63,14 @@ Already delivered:
   circular references, with parent identity and absolute bounds when geometry fields are available.
 - a cycle-safe live focus chain derived from emitted `focusedChild` references, with clickable
   Inspector breadcrumbs and matching node highlights without treating focus as hierarchy.
+- runtime method calls captured separately from field mutations, including emitted host address,
+  arguments, and source location; observer calls are correlated only when the emitted handler and
+  live component ID match a discovered `ObserveField` registration.
 
 Remaining integration work before 0.2 can close:
 
-- extend the stable hierarchical live-address registry with observer-call correlation and source
-  stack; bounds remain explicitly unavailable when geometry fields are not emitted, and
+- extend runtime-call diagnostics with complete source stacks; bounds remain explicitly unavailable
+  when geometry fields are not emitted, and
   IDs remain address-backed when the engine does not emit a component `id`;
 - add validated Inspector field editing and transient overrides against the live engine;
 - classify unsupported engine behavior explicitly instead of falling back silently to the
@@ -80,7 +83,7 @@ Exit criteria:
 - the IEDB navigation shell can initialize, bind observers, change routes, and restore focus without unsupported linear-flow shortcuts;
 - runtime errors include file, line, routine, and a useful stack trace.
 
-## 0.3 — SceneGraph rendering fidelity
+## 0.3 ? SceneGraph rendering fidelity
 
 Goal: render common channel screens with layout and styling close enough for daily UI development.
 
@@ -101,7 +104,7 @@ Text and assets:
 
 Display profiles:
 
-- deterministic 1280×720 and 1920×1080 canvases;
+- deterministic 1280?720 and 1920?1080 canvases;
 - 4K profile and documented scaling behavior;
 - safe areas, aspect ratio, overscan simulation, background color/image, and UI-resolution selection;
 - device-pixel-ratio independence so screenshots remain reproducible.
@@ -112,7 +115,7 @@ Exit criteria:
 - focus, selection, visibility, opacity, text, and image changes match stored reference flows;
 - screenshot comparison passes agreed per-region pixel tolerances at 720p and 1080p.
 
-## 0.4 — Roku compatibility APIs and asynchronous execution
+## 0.4 ? Roku compatibility APIs and asynchronous execution
 
 Goal: support the platform services most channels require without coupling BrightScript to Electron.
 
@@ -129,7 +132,7 @@ Exit criteria:
 - registry and device-profile state are isolated and reproducible;
 - supported APIs have contract tests and explicit failure behavior.
 
-## 0.5 — Network parity and inspection
+## 0.5 ? Network parity and inspection
 
 Goal: reproduce normal channel HTTP behavior while making every request inspectable.
 
@@ -145,7 +148,7 @@ Exit criteria:
 - asynchronous completion reaches the correct message port/observer;
 - sensitive headers and values never appear in project memory, logs, or exports by default.
 
-## 0.6 — Media development player
+## 0.6 ? Media development player
 
 Goal: reproduce the development-facing `Video` and `Audio` state machines, not proprietary Roku playback internals.
 
@@ -162,7 +165,7 @@ Exit criteria:
 - media errors are actionable and do not pretend protected playback succeeded;
 - device-only codec, DRM, certification, and performance gates remain documented.
 
-## 0.7 — Validation, testing, and visual comparison
+## 0.7 ? Validation, testing, and visual comparison
 
 Goal: make compatibility measurable instead of subjective.
 
@@ -179,7 +182,7 @@ Exit criteria:
 - visual regressions produce an inspectable diff rather than a binary failure;
 - the IEDB reference suite runs locally and in CI with deterministic mocks.
 
-## 0.8 — Debugger and performance tooling
+## 0.8 ? Debugger and performance tooling
 
 Goal: make RokuLab useful for diagnosing channel behavior, not only previewing it.
 
@@ -196,7 +199,7 @@ Exit criteria:
 - debugger and hot reload never silently corrupt runtime state;
 - performance data clearly distinguishes simulation metrics from Roku-device metrics.
 
-## 0.9 — Physical-device correlation and release readiness
+## 0.9 ? Physical-device correlation and release readiness
 
 Goal: close the gap between simulation and actual hardware with a controlled comparison workflow.
 
@@ -212,7 +215,7 @@ Exit criteria:
 - differences are classified as RokuLab bug, documented limitation, device/profile variation, or device-only behavior;
 - credentials and local device data are protected and excluded from releases.
 
-## 1.0 — Documented high-fidelity compatibility
+## 1.0 ? Documented high-fidelity compatibility
 
 Goal: a stable development tool with a measurable compatibility threshold and safe extension contracts.
 

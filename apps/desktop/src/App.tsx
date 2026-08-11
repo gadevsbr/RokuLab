@@ -22,6 +22,12 @@ import {
   visibleRuntimeFields,
   type RuntimeNode,
 } from './runtime-tree';
+import {
+  correlateObserverCalls,
+  formatRuntimeLocation,
+  runtimeCallFromUpdate,
+  type RuntimeCall,
+} from './runtime-calls';
 
 const sourcePattern = /(^manifest$|\.(brs|xml|json|txt)$)/i;
 
@@ -261,6 +267,7 @@ export function App() {
   const [engineRestarts, setEngineRestarts] = useState(0);
   const [engineEvents, setEngineEvents] = useState<EngineDiagnostic[]>([]);
   const [engineFields, setEngineFields] = useState<EngineFieldUpdate[]>([]);
+  const [runtimeCalls, setRuntimeCalls] = useState<RuntimeCall[]>([]);
   const [runtimeNodes, setRuntimeNodes] = useState<RuntimeNode[]>([]);
   const [selectedRuntimeNode, setSelectedRuntimeNode] = useState<string>();
   const [lastEngineInput, setLastEngineInput] = useState('');
@@ -283,6 +290,10 @@ export function App() {
     [inspectedRuntimeNode, runtimeNodes],
   );
   const focusChain = useMemo(() => runtimeFocusChain(runtimeNodes), [runtimeNodes]);
+  const observerCalls = useMemo(
+    () => correlateObserverCalls(runtimeCalls, runtimeNodes, project?.observers ?? []),
+    [project?.observers, runtimeCalls, runtimeNodes],
+  );
   const focusAddresses = useMemo(
     () => new Set(focusChain.map(({ address }) => address)),
     [focusChain],
@@ -348,6 +359,8 @@ export function App() {
       try {
         setError('');
         setEngineConsole([]);
+        setEngineFields([]);
+        setRuntimeCalls([]);
         setRuntimeNodes([]);
         setSelectedRuntimeNode(undefined);
         setStatus(
@@ -381,17 +394,23 @@ export function App() {
               ]);
             } else if (event === 'worker-update') {
               const update = data as {
+                id?: number;
                 action: string;
                 address: string;
                 key: string;
                 type: string;
                 value: unknown;
               };
-              setEngineFields((updates) => [
-                ...updates.slice(-99),
-                { ...update, value: serializeDiagnostic(update.value) },
-              ]);
-              setRuntimeNodes((nodes) => applyRuntimeUpdate(nodes, update));
+              const call = runtimeCallFromUpdate(update);
+              if (call) {
+                setRuntimeCalls((calls) => [...calls.slice(-99), call]);
+              } else {
+                setEngineFields((updates) => [
+                  ...updates.slice(-99),
+                  { ...update, value: serializeDiagnostic(update.value) },
+                ]);
+                setRuntimeNodes((nodes) => applyRuntimeUpdate(nodes, update));
+              }
             } else if (event === 'error') {
               setError(typeof data === 'string' ? data : serializeDiagnostic(data));
             } else if (event === 'closed') {
@@ -511,12 +530,12 @@ export function App() {
             {project.manifest.major_version ?? '0'}.{project.manifest.minor_version ?? '0'}.
             {project.manifest.build_version ?? '0'}
           </em>
-          <span>⌄</span>
+          <span>?</span>
         </button>
         <div className="toolbar-context">
-          <button title="Current branch">⑂ main ⌄</button>
-          <button title="Virtual TV profile">▣ Roku TV · 1080p ⌄</button>
-          <button title="Run configuration">⌁ app ⌄</button>
+          <button title="Current branch">? main ?</button>
+          <button title="Virtual TV profile">? Roku TV ? 1080p ?</button>
+          <button title="Run configuration">? app ?</button>
         </div>
         <nav>
           <button
@@ -525,7 +544,7 @@ export function App() {
             title="Run channel"
             onClick={() => void runEngine()}
           >
-            ▶
+            ?
           </button>
           <button
             aria-label="Stop"
@@ -533,38 +552,38 @@ export function App() {
             disabled={!engineActive}
             onClick={() => void stopEngine()}
           >
-            ■
+            ?
           </button>
           <button
             aria-label="Reload"
             title="Reload"
             onClick={() => void window.rokulab?.openPath(project.rootPath).then(setProject)}
           >
-            ↻
+            ?
           </button>
           <button
             aria-label="Open another project"
             title="Open another project"
             onClick={() => setProject(undefined)}
           >
-            ⋮
+            ?
           </button>
         </nav>
       </header>
       <aside className="tool-rail" aria-label="Tool windows">
         <button className="active" title="Project">
-          ▱
+          ?
         </button>
-        <button title="SceneGraph">◇</button>
-        <button title="Inspector">⚙</button>
-        <button title="Problems">△</button>
+        <button title="SceneGraph">?</button>
+        <button title="Inspector">?</button>
+        <button title="Problems">?</button>
         <span />
-        <button title="Terminal">›_</button>
+        <button title="Terminal">?_</button>
       </aside>
       <aside className="explorer">
         <div className="panel-title">
           <h2>PROJECT</h2>
-          <button title="Panel options">⋮</button>
+          <button title="Panel options">?</button>
         </div>
         <FileTree
           entries={project.files}
@@ -599,9 +618,9 @@ export function App() {
             <section className="preview-device">
               <div className="preview-toolbar">
                 <h2>RUNNING TV</h2>
-                <span>Roku TV · 1080p</span>
+                <span>Roku TV ? 1080p</span>
                 <span className={engineActive ? 'device-status running' : 'device-status'}>
-                  {engineActive ? '● Running' : '○ Stopped'}
+                  {engineActive ? '? Running' : '? Stopped'}
                 </span>
                 <span>100%</span>
               </div>
@@ -626,35 +645,35 @@ export function App() {
               </div>
               <div className="remote">
                 <button aria-label="Back" onClick={() => engineActive && sendEngineInput('back')}>
-                  ↩
+                  ?
                 </button>
                 <button aria-label="Up" onClick={() => move('up')}>
-                  ↑
+                  ?
                 </button>
                 <div>
                   <button aria-label="Left" onClick={() => move('left')}>
-                    ←
+                    ?
                   </button>
                   <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
                     OK
                   </button>
                   <button aria-label="Right" onClick={() => move('right')}>
-                    →
+                    ?
                   </button>
                 </div>
                 <button aria-label="Down" onClick={() => move('down')}>
-                  ↓
+                  ?
                 </button>
                 <div className="media-keys">
-                  <button onClick={() => engineActive && sendEngineInput('rev')}>◀◀</button>
-                  <button onClick={() => engineActive && sendEngineInput('play')}>▶Ⅱ</button>
-                  <button onClick={() => engineActive && sendEngineInput('fwd')}>▶▶</button>
+                  <button onClick={() => engineActive && sendEngineInput('rev')}>??</button>
+                  <button onClick={() => engineActive && sendEngineInput('play')}>??</button>
+                  <button onClick={() => engineActive && sendEngineInput('fwd')}>??</button>
                 </div>
-                <small>Keyboard: arrows · Enter · Escape</small>
+                <small>Keyboard: arrows ? Enter ? Escape</small>
               </div>
               <dl className="remote-runtime">
                 <dt>Canvas</dt>
-                <dd>1920 × 1080</dd>
+                <dd>1920 ? 1080</dd>
                 <dt>Observers</dt>
                 <dd>{project.observers.length}</dd>
                 <dt>Events</dt>
@@ -688,7 +707,7 @@ export function App() {
       <aside className="inspector">
         <div className="panel-title">
           <h2>INSPECTOR</h2>
-          <button title="Panel options">⋮</button>
+          <button title="Panel options">?</button>
         </div>
         <h2>RUNTIME</h2>
         <dl>
@@ -727,6 +746,32 @@ export function App() {
             <dd title={update.value}>{update.value}</dd>
           </dl>
         ))}
+        <h2>RUNTIME CALLS ({runtimeCalls.length})</h2>
+        {runtimeCalls.length > 0 ? (
+          runtimeCalls.slice(-20).map((call, index) => (
+            <dl key={`${call.id ?? index}-${call.address}-${call.method}`}>
+              <dt title={`${call.type}:${call.hostAddress}`}>{call.method}()</dt>
+              <dd title={formatRuntimeLocation(call.location)}>
+                {formatRuntimeLocation(call.location)}
+              </dd>
+            </dl>
+          ))
+        ) : (
+          <p className="inspector-empty">No emitted runtime calls</p>
+        )}
+        <h2>OBSERVER CALLS ({observerCalls.length})</h2>
+        {observerCalls.length > 0 ? (
+          observerCalls.slice(-20).map(({ call, observer, node }, index) => (
+            <dl key={`${call.id ?? index}-${observer.nodeId}-${observer.field}`}>
+              <dt title={`${observer.source}:${observer.line}`}>
+                #{node?.nodeId}.{observer.field}
+              </dt>
+              <dd title={formatRuntimeLocation(call.location)}>{call.method}()</dd>
+            </dl>
+          ))
+        ) : (
+          <p className="inspector-empty">No correlated observer calls</p>
+        )}
         <h2>FOCUS CHAIN ({focusChain.length})</h2>
         {focusChain.length > 0 ? (
           <ol className="focus-path">
@@ -771,7 +816,7 @@ export function App() {
               <dt>bounds</dt>
               <dd>
                 {inspectedRuntimeBounds
-                  ? `${inspectedRuntimeBounds.x}, ${inspectedRuntimeBounds.y} · ${inspectedRuntimeBounds.width} × ${inspectedRuntimeBounds.height}`
+                  ? `${inspectedRuntimeBounds.x}, ${inspectedRuntimeBounds.y} ? ${inspectedRuntimeBounds.width} ? ${inspectedRuntimeBounds.height}`
                   : 'unavailable'}
               </dd>
             </dl>
@@ -873,7 +918,7 @@ export function App() {
       </section>
       <footer className="statusbar">
         <span>RokuLab</span>
-        <span>›</span>
+        <span>?</span>
         <span>{project.manifest.title}</span>
         <span className="status-spacer" />
         <span>{engineActive ? 'Runtime connected' : 'Runtime stopped'}</span>

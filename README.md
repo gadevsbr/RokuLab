@@ -6,14 +6,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.14/RokuLab-0.1.0-alpha.14-windows-x64.exe"><strong>Download the recommended Community Preview for Windows</strong></a>
-  ·
-  <a href="https://github.com/gadevsbr/RokuLab/releases/tag/v0.1.0-alpha.14">Release notes</a>
-  ·
+  <a href="https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.15/RokuLab-0.1.0-alpha.15-windows-x64.exe"><strong>Download the recommended Community Preview for Windows</strong></a>
+  ?
+  <a href="https://github.com/gadevsbr/RokuLab/releases/tag/v0.1.0-alpha.15">Release notes</a>
+  ?
   <a href="https://github.com/gadevsbr/RokuLab/issues/1">Share Community Preview feedback</a>
 </p>
 
-> **Recommended test build: `v0.1.0-alpha.14`.** RokuLab is an early community preview with intentionally partial Roku compatibility. It does not emulate or distribute Roku OS, and final validation still belongs on physical Roku hardware.
+> **Recommended test build: `v0.1.0-alpha.15`.** RokuLab is an early community preview with intentionally partial Roku compatibility. It does not emulate or distribute Roku OS, and final validation still belongs on physical Roku hardware.
 
 ![RokuLab Community Preview showing the IEDB channel and source editor](docs/assets/rokulab-community-preview.gif)
 
@@ -22,11 +22,13 @@
 - Open a Roku channel folder or the bundled Hello World example.
 - Read the manifest and project tree with a sandboxed Electron filesystem boundary.
 - Run multi-file BrightScript and SceneGraph through the experimental `brs-engine` 2.3.0 and `brs-scenegraph` 0.3.0 compatibility adapter.
-- Render a 1920 × 1080 SceneGraph canvas in the TV-first Preview workspace.
+- Render a 1920 ? 1080 SceneGraph canvas in the TV-first Preview workspace.
 - Send directional, OK, Back, playback, and keyboard input through the virtual remote.
 - Edit BrightScript, XML, JSON, manifest, and text files in the locally bundled Monaco editor.
 - Save explicitly and restart the runtime through serialized hot reload.
-- Inspect runtime events, Worker field updates, stable live-node addresses, emitted component IDs, parent/child relations, current fields, and available layout bounds.
+- Inspect runtime events, Worker field updates, method calls, strictly correlated observer callbacks,
+  available call-site locations, stable live-node addresses, emitted component IDs, parent/child
+  relations, current fields, focus paths, and available layout bounds.
 - Validate projects from the CLI and surface grouped compatibility diagnostics.
 - Run the included automated suite against the bundled channel, packaged Windows app, and the IEDB reference channel.
 
@@ -43,7 +45,7 @@
 
 ## Download and run on Windows
 
-1. Download [`RokuLab-0.1.0-alpha.14-windows-x64.exe`](https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.14/RokuLab-0.1.0-alpha.14-windows-x64.exe).
+1. Download [`RokuLab-0.1.0-alpha.15-windows-x64.exe`](https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.15/RokuLab-0.1.0-alpha.15-windows-x64.exe).
 2. Run the portable executable; installation is not required.
 3. Choose a Roku project folder or open the bundled example.
 4. Select **Run** to start the compatibility engine.
@@ -51,18 +53,20 @@
 Published artifact SHA-256:
 
 ```text
-5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6
+3B80CBE8710ED06A6AEF45E55020EAE1C86B1500CACE99F2DB9240E1111CF996
 ```
 
 ### Windows SmartScreen warning
 
-The current community preview is **not certificate-signed**. Windows SmartScreen may therefore show “Windows protected your PC” or identify the publisher as unknown. Verify that the file came from this repository's Releases page and that its SHA-256 matches the value above. If you trust the verified artifact, choose **More info** and then **Run anyway**. A warning caused by the missing signature does not replace normal security judgment; never run a copy obtained from an unofficial mirror.
+The current community preview is **not certificate-signed**. Windows SmartScreen may therefore show ?Windows protected your PC? or identify the publisher as unknown. Verify that the file came from this repository's Releases page and that its SHA-256 matches the value above. If you trust the verified artifact, choose **More info** and then **Run anyway**. A warning caused by the missing signature does not replace normal security judgment; never run a copy obtained from an unofficial mirror.
 
 ## Known limitations
 
 - Compatibility is partial and is not binary-compatible Roku OS emulation.
 - Rendering, focus, SceneGraph fields, Roku objects, networking, Tasks, and media behavior do not yet cover every documented Roku surface.
-- The live Inspector only shows metadata emitted by the compatibility engine; missing IDs, bounds, source stacks, and observer correlations remain explicit rather than guessed.
+- The live Inspector only shows metadata emitted by the compatibility engine; missing IDs, bounds,
+  calls, and source locations remain explicit rather than guessed. Calls expose one emitted call-site
+  location when available, not a complete source stack.
 - Live Inspector field editing, debugger breakpoints, network tooling, and language-server diagnostics are not implemented yet.
 - Hot reload currently performs a safe full runtime restart and resets channel state.
 - DRM, proprietary codecs, firmware behavior, certification, and device performance remain physical-device-only gates.

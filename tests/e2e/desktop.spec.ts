@@ -202,6 +202,8 @@ test('IEDB navigation shell starts in the compatibility engine', async () => {
     ).toBeVisible({
       timeout: 30_000,
     });
+    await expect(window.getByRole('heading', { name: /RUNTIME CALLS \(\d+\)/ })).toBeVisible();
+    await expect(window.getByRole('heading', { name: /OBSERVER CALLS \(\d+\)/ })).toBeVisible();
     await expect(window.getByRole('heading', { name: /LIVE NODES \([1-9]\d*\)/ })).toBeVisible();
     await expect(window.getByRole('heading', { name: /FOCUS CHAIN \(\d+\)/ })).toBeVisible();
     await window.locator('.runtime-tree button').first().click();

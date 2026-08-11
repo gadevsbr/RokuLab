@@ -2,7 +2,18 @@
 
 Community publication readiness: the public README presents the newest validated alpha as the recommended Community Preview with real IEDB preview/editor screenshots, a four-frame GIF, direct verified download, current runtime capabilities, known limitations, and unsigned SmartScreen guidance. GitHub Discussions is enabled, feedback issue `#1` is open, and releases remain correctly marked prerelease.
 
-Phase: `0.1.0-alpha.14` live focus-chain validation and publication.
+Phase: `0.1.0-alpha.15` runtime-call and observer-correlation validation.
+
+Alpha.15 separates emitted Worker method calls from field mutations and shows their host, method,
+arguments metadata, and call-site source location in the Inspector. A call is classified as an
+observer callback only when its handler and live component ID match the project's discovered
+`ObserveField` registration. Complete source stacks and live editing remain open.
+
+Alpha.15 evidence: formatting, lint, typecheck, 28 Vitest tests, dependency audit, all workspace
+builds, IEDB validation, Windows packaging, and all 5 sequential Electron tests passed, including
+IEDB and packaged execution. Portable artifact: 107,901,895 bytes; SHA-256
+`3B80CBE8710ED06A6AEF45E55020EAE1C86B1500CACE99F2DB9240E1111CF996`; Authenticode status
+`NotSigned`.
 
 Alpha.14 follows emitted `focusedChild` references into a cycle-safe live focus chain, displays clickable breadcrumbs, and highlights matching live nodes. Missing focus metadata remains explicit. Observer-call correlation, source stack, and live editing remain open.
 

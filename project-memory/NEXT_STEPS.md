@@ -1,6 +1,6 @@
 # Next steps
 
-1. Add reliable observer-call correlation and source stacks to the hierarchical live node registry; broaden bounds as the engine exposes geometry.
+1. Add complete source stacks to captured runtime calls and errors; broaden bounds as the engine exposes geometry.
 2. Add validated live Inspector field editing and transient overrides.
 3. Expand IEDB reference flows across library/profile/network-loaded states with deterministic mocks.
 4. Add macOS/Linux artifacts and GitHub release automation.

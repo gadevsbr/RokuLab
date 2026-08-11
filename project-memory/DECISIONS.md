@@ -2,6 +2,16 @@
 
 ## Active
 
+- 2026-08-11: Worker `action: call` messages are call evidence, not field mutations. Observer
+  classification requires both handler-name and emitted live-node ID agreement with a discovered
+  registration; missing calls, IDs, or locations remain explicit rather than inferred.
+- Alpha.15 passed formatting, lint, typecheck, 28 Vitest tests, audit, all builds, IEDB validation,
+  Windows packaging, and 5 sequential Electron E2E tests. Portable size: 107,901,895 bytes;
+  SHA-256: `3B80CBE8710ED06A6AEF45E55020EAE1C86B1500CACE99F2DB9240E1111CF996`;
+  Authenticode: `NotSigned`.
+- Superseded on 2026-08-11: alpha.14 was the recommended Community Preview. Alpha.15 replaces it
+  after passing the complete release gate with runtime-call diagnostics.
+
 - 2026-08-11: live focus follows only emitted `focusedChild` references, independently of structural hierarchy, and stops at repeated addresses. An empty chain means the engine did not emit a usable path; RokuLab does not guess focus from update order.
 - Alpha.14 passed formatting, lint, typecheck, 25 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests. Portable size: 107,899,535 bytes; SHA-256: `5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6`; Authenticode: `NotSigned`.
 

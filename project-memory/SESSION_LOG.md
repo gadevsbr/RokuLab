@@ -2,6 +2,13 @@
 
 ## 2026-08-11
 
+- Captured emitted Worker method calls without polluting live fields, exposed call-site locations,
+  and correlated observer callbacks only by matching handler plus emitted component ID.
+- Added three unit tests for call normalization, strict observer matching, and source formatting;
+  the suite now contains 28 Vitest tests. The IEDB E2E flow verifies both diagnostic panels.
+- Generated and validated the unsigned alpha.15 Windows portable (107,901,895 bytes, SHA-256
+  `3B80CBE8710ED06A6AEF45E55020EAE1C86B1500CACE99F2DB9240E1111CF996`).
+
 - Added a cycle-safe focus chain from emitted `focusedChild` references, clickable Inspector breadcrumbs, and focus-path highlighting without changing hierarchy.
 - Added tests for a three-node focus path and circular focus references; the suite now contains 25 Vitest tests.
 - Generated and validated the unsigned alpha.14 Windows portable (107,899,535 bytes, SHA-256 `5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6`).
