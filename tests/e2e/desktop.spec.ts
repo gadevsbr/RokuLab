@@ -201,6 +201,12 @@ test('IEDB navigation shell starts in the compatibility engine', async () => {
     ).toBeVisible({
       timeout: 30_000,
     });
+    await expect(window.getByRole('heading', { name: /LIVE NODES \([1-9]\d*\)/ })).toBeVisible();
+    await window.locator('.runtime-tree button').first().click();
+    await expect(window.getByRole('heading', { name: /LIVE PROPERTIES/ })).toBeVisible();
+    await expect(
+      window.locator('.inspector dt').getByText('address', { exact: true }),
+    ).toBeVisible();
     await expect(window.locator('#display')).toBeVisible();
     const home = await canvasSignature(window);
     await window.getByRole('button', { name: 'Down', exact: true }).click();

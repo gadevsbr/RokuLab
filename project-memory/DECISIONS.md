@@ -2,6 +2,9 @@
 
 ## Active
 
+- 2026-08-11: live runtime identity is anchored to Worker type/address and enriched with component `id` and subtype when emitted. Guessing IDs or hierarchy from update order is rejected; missing engine metadata remains explicit until a reliable relation is observed.
+- Alpha.12 passed formatting, lint, typecheck, 20 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests including live-node inspection in IEDB. Portable size: 107,899,164 bytes; SHA-256: `13AFB920C0821923AC76C80DF99EC7E13F6279BBC8DAF4AF973EC9770D6E8C9E`; Authenticode: `NotSigned`.
+
 - Superseded on 2026-08-11: alpha.10 used an Android-Studio-inspired layout with a persistent Running TV beside the editor. Alpha.11 replaces it because the device panel unnecessarily reduced editing width.
 - 2026-08-11: Preview and Editor share the entire upper workspace. Preview divides it into a large 16:9 TV and dedicated right-side remote column; Editor unmounts both and occupies the full region. Project, console, and Inspector remain stable.
 - Alpha.11 passed formatting, lint, typecheck, 18 Vitest tests, all builds, and 5 sequential Electron E2E tests. Portable size: 107,899,203 bytes; SHA-256: `88F936F98F6F51CE20AEC122FFAD49F2CAE5EEDEC7E423D722016D2FB28AC789`; Authenticode: `NotSigned`.

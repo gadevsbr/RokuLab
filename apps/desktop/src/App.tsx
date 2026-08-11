@@ -13,6 +13,12 @@ import {
   startCompatibilityEngine,
   stopCompatibilityEngine,
 } from './compatibility-engine';
+import {
+  applyRuntimeUpdate,
+  runtimeNodeLabel,
+  visibleRuntimeFields,
+  type RuntimeNode,
+} from './runtime-tree';
 
 const sourcePattern = /(^manifest$|\.(brs|xml|json|txt)$)/i;
 
@@ -204,6 +210,8 @@ export function App() {
   const [engineRestarts, setEngineRestarts] = useState(0);
   const [engineEvents, setEngineEvents] = useState<EngineDiagnostic[]>([]);
   const [engineFields, setEngineFields] = useState<EngineFieldUpdate[]>([]);
+  const [runtimeNodes, setRuntimeNodes] = useState<RuntimeNode[]>([]);
+  const [selectedRuntimeNode, setSelectedRuntimeNode] = useState<string>();
   const [lastEngineInput, setLastEngineInput] = useState('');
   const projectRoot = project?.rootPath;
   const focusTargets = useMemo(
@@ -213,6 +221,10 @@ export function App() {
   const inspectedNode = useMemo(
     () => findSceneNode(project?.scene, selectedNode),
     [project?.scene, selectedNode],
+  );
+  const inspectedRuntimeNode = useMemo(
+    () => runtimeNodes.find(({ address }) => address === selectedRuntimeNode),
+    [runtimeNodes, selectedRuntimeNode],
   );
 
   const open = async (demo = false) => {
@@ -275,6 +287,8 @@ export function App() {
       try {
         setError('');
         setEngineConsole([]);
+        setRuntimeNodes([]);
+        setSelectedRuntimeNode(undefined);
         setStatus(
           engineActive ? 'Restarting compatibility engine...' : 'Starting compatibility engine...',
         );
@@ -316,6 +330,7 @@ export function App() {
                 ...updates.slice(-99),
                 { ...update, value: serializeDiagnostic(update.value) },
               ]);
+              setRuntimeNodes((nodes) => applyRuntimeUpdate(nodes, update));
             } else if (event === 'error') {
               setError(typeof data === 'string' ? data : serializeDiagnostic(data));
             } else if (event === 'closed') {
@@ -651,6 +666,40 @@ export function App() {
             <dd title={update.value}>{update.value}</dd>
           </dl>
         ))}
+        <h2>LIVE NODES ({runtimeNodes.length})</h2>
+        <ul className="runtime-tree">
+          {runtimeNodes.map((node) => (
+            <li key={node.stableId}>
+              <button
+                className={selectedRuntimeNode === node.address ? 'active' : ''}
+                title={`${node.type}:${node.address}`}
+                onClick={() => setSelectedRuntimeNode(node.address)}
+              >
+                <span>{runtimeNodeLabel(node)}</span>
+                <small>{node.updates}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {inspectedRuntimeNode && (
+          <>
+            <h2>LIVE PROPERTIES {runtimeNodeLabel(inspectedRuntimeNode)}</h2>
+            <dl>
+              <dt>address</dt>
+              <dd title={inspectedRuntimeNode.address}>{inspectedRuntimeNode.address}</dd>
+            </dl>
+            <dl>
+              <dt>type</dt>
+              <dd>{inspectedRuntimeNode.subtype ?? inspectedRuntimeNode.type}</dd>
+            </dl>
+            {visibleRuntimeFields(inspectedRuntimeNode).map(([key, value]) => (
+              <dl key={key}>
+                <dt>{key}</dt>
+                <dd title={serializeDiagnostic(value)}>{serializeDiagnostic(value)}</dd>
+              </dl>
+            ))}
+          </>
+        )}
         <h2>SCENEGRAPH</h2>
         {project.scene && (
           <ul className="tree">

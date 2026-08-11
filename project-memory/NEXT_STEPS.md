@@ -1,6 +1,6 @@
 # Next steps
 
-1. Map live Worker addresses to the hierarchical SceneGraph tree, stable IDs, focus chain, observer calls, source stacks, and layout bounds.
+1. Extend the address-stable live node registry with reliable parent/child relations, focus chain, observer calls, source stacks, and layout bounds.
 2. Add validated live Inspector field editing and transient overrides.
 3. Expand IEDB reference flows across library/profile/network-loaded states with deterministic mocks.
 4. Add macOS/Linux artifacts and GitHub release automation.

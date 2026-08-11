@@ -57,11 +57,14 @@ Already delivered:
 - an IEDB reference flow that starts SceneGraph, observes live updates, changes rendered
   navigation states, opens a detail path, returns with Back, and remains healthy;
 - an observer fixture proving one field change invokes its callback exactly once.
+- a live node registry that correlates Worker addresses across updates, adopts component IDs and
+  subtypes when emitted, maintains current field snapshots, and exposes selectable live properties.
 
 Remaining integration work before 0.2 can close:
 
-- map anonymous Worker addresses to a hierarchical live node tree with stable component IDs,
-  focus chain, observer-call correlation, source stack, and layout bounds;
+- extend the stable live-address registry into a hierarchical parent/child tree with focus chain,
+  observer-call correlation, source stack, and layout bounds; IDs remain address-backed when the
+  engine does not emit a component `id`;
 - add validated Inspector field editing and transient overrides against the live engine;
 - classify unsupported engine behavior explicitly instead of falling back silently to the
   legacy preview; the legacy parser remains a pre-run inspection surface only.

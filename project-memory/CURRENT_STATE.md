@@ -1,6 +1,10 @@
 # Current state
 
-Phase: `0.1.0-alpha.11` shared preview/editor workspace validation and publication.
+Phase: `0.1.0-alpha.12` live runtime node correlation validation and publication.
+
+Alpha.12 adds an address-stable live node registry over Worker synchronization traffic. It adopts emitted component IDs/subtypes without changing identity, maintains current fields/removals and update counts, and exposes selectable Live Nodes and Live Properties in the Inspector. Parent/child hierarchy, focus chain, observer correlation, source stack, bounds, and live editing remain open.
+
+Alpha.12 evidence: formatting, lint, typecheck, 20 Vitest tests, dependency audit, all workspace builds, Windows packaging, and all 5 sequential Electron tests passed. The IEDB test starts the live engine, observes a nonempty node registry, selects a real runtime node, and verifies its address properties before completing navigation. Portable artifact: 107,899,164 bytes; SHA-256 `13AFB920C0821923AC76C80DF99EC7E13F6279BBC8DAF4AF973EC9770D6E8C9E`; Authenticode status `NotSigned`.
 
 Alpha.11 makes the full upper workspace mode-dependent: Preview uses the available width for a large 16:9 TV plus a dedicated right-side remote column, while Editor removes both preview and remote and gives Monaco the entire same region. Project, console, and Inspector keep stable positions.
 

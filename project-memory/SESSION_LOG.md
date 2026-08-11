@@ -2,6 +2,10 @@
 
 ## 2026-08-11
 
+- Added address-stable live runtime nodes that adopt emitted IDs/subtypes, retain current field state and removals, count updates, and expose selectable properties in the Inspector.
+- Added two reducer tests plus IEDB E2E evidence that a real live node can be selected and its address/properties inspected; the suite now contains 20 Vitest tests.
+- Generated and validated the unsigned alpha.12 Windows portable (107,899,164 bytes, SHA-256 `13AFB920C0821923AC76C80DF99EC7E13F6279BBC8DAF4AF973EC9770D6E8C9E`).
+
 - Integrated `brs-engine` 2.3.0 and `brs-scenegraph` 0.3.0 behind a RokuLab adapter, with secure project ZIP creation, cross-origin-isolated Electron hosting, 1080p canvas output, console forwarding, Run/Stop, and remote/media input.
 - Converted the bundled example into a valid `roSGScreen` channel. An Electron E2E now verifies a nontransparent rendered canvas frame rather than relying only on status text.
 - Added an archive containment/size boundary and an integration test that inspects the generated manifest and component entries.
