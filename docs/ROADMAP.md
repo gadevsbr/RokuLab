@@ -61,11 +61,13 @@ Already delivered:
   subtypes when emitted, maintains current field snapshots, and exposes selectable live properties.
 - hierarchical live nodes derived only from serialized `_children_` relations, guarded against
   circular references, with parent identity and absolute bounds when geometry fields are available.
+- a cycle-safe live focus chain derived from emitted `focusedChild` references, with clickable
+  Inspector breadcrumbs and matching node highlights without treating focus as hierarchy.
 
 Remaining integration work before 0.2 can close:
 
-- extend the stable hierarchical live-address registry with focus chain, observer-call correlation,
-  and source stack; bounds remain explicitly unavailable when geometry fields are not emitted, and
+- extend the stable hierarchical live-address registry with observer-call correlation and source
+  stack; bounds remain explicitly unavailable when geometry fields are not emitted, and
   IDs remain address-backed when the engine does not emit a component `id`;
 - add validated Inspector field editing and transient overrides against the live engine;
 - classify unsupported engine behavior explicitly instead of falling back silently to the

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyRuntimeUpdate,
+  runtimeFocusChain,
   runtimeNodeBounds,
   runtimeNodeChildren,
   runtimeNodeLabel,
@@ -110,5 +111,48 @@ describe('live runtime node correlation', () => {
 
     expect(nodes.find(({ address }) => address === 'scene')?.parentAddress).toBeUndefined();
     expect(nodes.find(({ address }) => address === 'group')?.parentAddress).toBe('scene');
+  });
+
+  it('follows focusedChild references without treating them as hierarchy', () => {
+    let nodes = applyRuntimeUpdate([], {
+      action: 'set',
+      address: 'scene',
+      key: 'focusedChild',
+      type: 'scene',
+      value: { _node_: 'roSGNode:Group', _address_: 'menu', id: 'menu' },
+    });
+    nodes = applyRuntimeUpdate(nodes, {
+      action: 'set',
+      address: 'menu',
+      key: 'focusedChild',
+      type: 'node',
+      value: { _node_: 'roSGNode:Button', _address_: 'play', id: 'playButton' },
+    });
+
+    expect(runtimeFocusChain(nodes).map(({ address }) => address)).toEqual([
+      'scene',
+      'menu',
+      'play',
+    ]);
+    expect(nodes.find(({ address }) => address === 'menu')?.parentAddress).toBeUndefined();
+  });
+
+  it('stops a circular focusedChild chain', () => {
+    let nodes = applyRuntimeUpdate([], {
+      action: 'set',
+      address: 'scene',
+      key: 'focusedChild',
+      type: 'scene',
+      value: { _node_: 'roSGNode:Button', _address_: 'button' },
+    });
+    nodes = applyRuntimeUpdate(nodes, {
+      action: 'set',
+      address: 'button',
+      key: 'focusedChild',
+      type: 'node',
+      value: { _circular_: 'roSGNode:Scene', _address_: 'scene' },
+    });
+
+    expect(runtimeFocusChain(nodes)).toHaveLength(2);
   });
 });

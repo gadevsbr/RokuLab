@@ -551,6 +551,9 @@ button {
   background: #383b41;
   color: #fff;
 }
+.runtime-tree button.focus-chain {
+  box-shadow: inset 2px 0 #55c884;
+}
 .runtime-tree button span {
   flex: 1;
   overflow: hidden;
@@ -564,6 +567,34 @@ button {
   background: #30333a;
   color: #8f959e;
   text-align: center;
+}
+.focus-path {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.focus-path li:not(:last-child)::after {
+  content: '›';
+  margin-left: 4px;
+  color: #646a73;
+}
+.focus-path button {
+  padding: 3px 5px;
+  border: 0;
+  border-radius: 3px;
+  background: #26392f;
+  color: #78d39d;
+  font-size: 10px;
+  cursor: pointer;
+}
+.inspector-empty {
+  margin: 0;
+  color: #686e77;
+  font-size: 10px;
 }
 .bottom {
   grid-column: 3;

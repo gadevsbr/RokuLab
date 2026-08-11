@@ -6,14 +6,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.13/RokuLab-0.1.0-alpha.13-windows-x64.exe"><strong>Download the recommended Community Preview for Windows</strong></a>
+  <a href="https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.14/RokuLab-0.1.0-alpha.14-windows-x64.exe"><strong>Download the recommended Community Preview for Windows</strong></a>
   ·
-  <a href="https://github.com/gadevsbr/RokuLab/releases/tag/v0.1.0-alpha.13">Release notes</a>
+  <a href="https://github.com/gadevsbr/RokuLab/releases/tag/v0.1.0-alpha.14">Release notes</a>
   ·
   <a href="https://github.com/gadevsbr/RokuLab/issues/1">Share Community Preview feedback</a>
 </p>
 
-> **Recommended test build: `v0.1.0-alpha.13`.** RokuLab is an early community preview with intentionally partial Roku compatibility. It does not emulate or distribute Roku OS, and final validation still belongs on physical Roku hardware.
+> **Recommended test build: `v0.1.0-alpha.14`.** RokuLab is an early community preview with intentionally partial Roku compatibility. It does not emulate or distribute Roku OS, and final validation still belongs on physical Roku hardware.
 
 ![RokuLab Community Preview showing the IEDB channel and source editor](docs/assets/rokulab-community-preview.gif)
 
@@ -43,7 +43,7 @@
 
 ## Download and run on Windows
 
-1. Download [`RokuLab-0.1.0-alpha.13-windows-x64.exe`](https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.13/RokuLab-0.1.0-alpha.13-windows-x64.exe).
+1. Download [`RokuLab-0.1.0-alpha.14-windows-x64.exe`](https://github.com/gadevsbr/RokuLab/releases/download/v0.1.0-alpha.14/RokuLab-0.1.0-alpha.14-windows-x64.exe).
 2. Run the portable executable; installation is not required.
 3. Choose a Roku project folder or open the bundled example.
 4. Select **Run** to start the compatibility engine.
@@ -51,7 +51,7 @@
 Published artifact SHA-256:
 
 ```text
-D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC
+5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6
 ```
 
 ### Windows SmartScreen warning

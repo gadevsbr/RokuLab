@@ -47,6 +47,11 @@ function serializedNode(
   };
 }
 
+export function runtimeNodeReference(value: unknown): string | undefined {
+  if (typeof value === 'string' && value.trim()) return value.trim();
+  return serializedNode(value)?.address;
+}
+
 function mergeSerializedNodes(
   nodes: RuntimeNode[],
   value: unknown,
@@ -131,6 +136,33 @@ export function applyRuntimeUpdate(
 
 export function runtimeNodeChildren(nodes: readonly RuntimeNode[], parent?: string): RuntimeNode[] {
   return nodes.filter(({ parentAddress }) => parentAddress === parent);
+}
+
+export function runtimeFocusChain(nodes: readonly RuntimeNode[]): RuntimeNode[] {
+  const focusedChild = (node: RuntimeNode) => {
+    const entry = Object.entries(node.fields).find(([key]) => key.toLowerCase() === 'focusedchild');
+    const address = runtimeNodeReference(entry?.[1]);
+    return nodes.find((candidate) => candidate.address === address);
+  };
+  const candidates = [
+    ...nodes.filter(
+      ({ type, subtype }) => type.toLowerCase() === 'scene' || subtype?.toLowerCase() === 'scene',
+    ),
+    ...nodes.filter(({ parentAddress }) => !parentAddress),
+  ];
+  let longest: RuntimeNode[] = [];
+  for (const candidate of candidates) {
+    const chain: RuntimeNode[] = [];
+    const visited = new Set<string>();
+    let current: RuntimeNode | undefined = candidate;
+    while (current && !visited.has(current.address)) {
+      visited.add(current.address);
+      chain.push(current);
+      current = focusedChild(current);
+    }
+    if (chain.length > longest.length && chain.some((node) => focusedChild(node))) longest = chain;
+  }
+  return longest;
 }
 
 export function runtimeNodeBounds(

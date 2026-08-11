@@ -1,8 +1,12 @@
 # Current state
 
-Community publication readiness: the public README now presents alpha.13 as the recommended Community Preview with real IEDB preview/editor screenshots, a four-frame GIF, direct verified download, current runtime capabilities, known limitations, and unsigned SmartScreen guidance. GitHub Discussions is enabled, feedback issue `#1` is open, and the release remains correctly marked prerelease.
+Community publication readiness: the public README presents the newest validated alpha as the recommended Community Preview with real IEDB preview/editor screenshots, a four-frame GIF, direct verified download, current runtime capabilities, known limitations, and unsigned SmartScreen guidance. GitHub Discussions is enabled, feedback issue `#1` is open, and releases remain correctly marked prerelease.
 
-Phase: `0.1.0-alpha.13` hierarchical live runtime inspection validation and publication.
+Phase: `0.1.0-alpha.14` live focus-chain validation and publication.
+
+Alpha.14 follows emitted `focusedChild` references into a cycle-safe live focus chain, displays clickable breadcrumbs, and highlights matching live nodes. Missing focus metadata remains explicit. Observer-call correlation, source stack, and live editing remain open.
+
+Alpha.14 evidence: formatting, lint, typecheck, 25 Vitest tests, dependency audit, all workspace builds, Windows packaging, and all 5 sequential Electron tests passed, including IEDB and packaged execution. Portable artifact: 107,899,535 bytes; SHA-256 `5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6`; Authenticode status `NotSigned`.
 
 Alpha.13 builds parent/child structure only from serialized SceneGraph `_children_` relations, rejects circular back-references, renders nested live nodes, and reports parent identity plus absolute bounds from nested translations and dimensions. Focus chain, observer-call correlation, source stack, and live editing remain open.
 

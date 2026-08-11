@@ -2,6 +2,9 @@
 
 ## Active
 
+- 2026-08-11: live focus follows only emitted `focusedChild` references, independently of structural hierarchy, and stops at repeated addresses. An empty chain means the engine did not emit a usable path; RokuLab does not guess focus from update order.
+- Alpha.14 passed formatting, lint, typecheck, 25 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests. Portable size: 107,899,535 bytes; SHA-256: `5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6`; Authenticode: `NotSigned`.
+
 - 2026-08-11: alpha.13 is the recommended Community Preview for external testers but remains a prerelease. Community presentation must pair real application media and direct download with partial-compatibility, unsigned Windows, SmartScreen, DRM, and physical-device limitations.
 
 - 2026-08-11: live hierarchy accepts only serialized `_children_`/recognized child collections and rejects ancestry cycles. `focusedChild` and ordinary node-valued fields are references, not structural parentage. Bounds are computed from emitted dimensions and ancestor translations or shown as unavailable.

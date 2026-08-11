@@ -2,6 +2,10 @@
 
 ## 2026-08-11
 
+- Added a cycle-safe focus chain from emitted `focusedChild` references, clickable Inspector breadcrumbs, and focus-path highlighting without changing hierarchy.
+- Added tests for a three-node focus path and circular focus references; the suite now contains 25 Vitest tests.
+- Generated and validated the unsigned alpha.14 Windows portable (107,899,535 bytes, SHA-256 `5A4A0AC0ADCAA1894B56D194AE7B51804287A5389E3B0B90A8B0AE642D5FE2D6`).
+
 - Prepared the public Community Preview page with real IEDB screenshots, a validated four-frame GIF, direct alpha.13 download/SHA, current capabilities, limitations, and SmartScreen guidance.
 - Enabled GitHub Discussions, opened Community Preview feedback issue `#1`, and renamed alpha.13 as the recommended testing release while preserving prerelease status.
 

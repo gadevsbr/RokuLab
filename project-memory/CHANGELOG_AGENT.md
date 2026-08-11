@@ -2,6 +2,8 @@
 
 ## 2026-08-11
 
+- Added cycle-safe live focus-chain inspection and highlighting from Worker `focusedChild` metadata.
+
 - Published the Community Preview presentation, reproducible media capture scripts, Discussions, and the public alpha.13 feedback channel.
 
 - Added cycle-safe live SceneGraph hierarchy and geometry inspection from serialized Worker metadata.

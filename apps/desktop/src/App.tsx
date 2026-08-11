@@ -15,6 +15,7 @@ import {
 } from './compatibility-engine';
 import {
   applyRuntimeUpdate,
+  runtimeFocusChain,
   runtimeNodeBounds,
   runtimeNodeChildren,
   runtimeNodeLabel,
@@ -121,12 +122,14 @@ function LiveRuntimeTree({
   selected,
   onSelect,
   ancestors = [],
+  focusAddresses,
 }: {
   nodes: RuntimeNode[];
   parent?: string;
   selected: string | undefined;
   onSelect(address: string): void;
   ancestors?: string[];
+  focusAddresses: ReadonlySet<string>;
 }) {
   const children = runtimeNodeChildren(nodes, parent).filter(
     ({ address }) => !ancestors.includes(address),
@@ -136,7 +139,7 @@ function LiveRuntimeTree({
       {children.map((node) => (
         <li key={node.stableId}>
           <button
-            className={selected === node.address ? 'active' : ''}
+            className={`${selected === node.address ? 'active' : ''} ${focusAddresses.has(node.address) ? 'focus-chain' : ''}`}
             title={`${node.type}:${node.address}`}
             onClick={() => onSelect(node.address)}
           >
@@ -151,6 +154,7 @@ function LiveRuntimeTree({
                 selected={selected}
                 onSelect={onSelect}
                 ancestors={[...ancestors, node.address]}
+                focusAddresses={focusAddresses}
               />
             </ul>
           )}
@@ -277,6 +281,11 @@ export function App() {
     () =>
       inspectedRuntimeNode ? runtimeNodeBounds(runtimeNodes, inspectedRuntimeNode) : undefined,
     [inspectedRuntimeNode, runtimeNodes],
+  );
+  const focusChain = useMemo(() => runtimeFocusChain(runtimeNodes), [runtimeNodes]);
+  const focusAddresses = useMemo(
+    () => new Set(focusChain.map(({ address }) => address)),
+    [focusChain],
   );
 
   const open = async (demo = false) => {
@@ -718,12 +727,27 @@ export function App() {
             <dd title={update.value}>{update.value}</dd>
           </dl>
         ))}
+        <h2>FOCUS CHAIN ({focusChain.length})</h2>
+        {focusChain.length > 0 ? (
+          <ol className="focus-path">
+            {focusChain.map((node) => (
+              <li key={node.stableId}>
+                <button onClick={() => setSelectedRuntimeNode(node.address)}>
+                  {runtimeNodeLabel(node)}
+                </button>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="inspector-empty">No emitted focusedChild path</p>
+        )}
         <h2>LIVE NODES ({runtimeNodes.length})</h2>
         <ul className="runtime-tree">
           <LiveRuntimeTree
             nodes={runtimeNodes}
             selected={selectedRuntimeNode}
             onSelect={setSelectedRuntimeNode}
+            focusAddresses={focusAddresses}
           />
         </ul>
         {inspectedRuntimeNode && (
