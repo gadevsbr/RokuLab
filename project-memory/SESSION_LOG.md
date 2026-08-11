@@ -2,6 +2,7 @@
 
 ## 2026-08-10
 
+- Expanded the roadmap from six summary lines into gated milestones 0.1 through 1.0 covering reactive runtime, rendering fidelity, Roku APIs, network, media, visual comparison, debugging, and physical-device correlation.
 - Replaced sequential focus cycling with shared, tested SceneGraph geometry that respects nested translations and invisible nodes.
 - Alpha.5 passed formatting, lint, typecheck, 15 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, audit, and IEDB validation. Portable size: 98,010,604 bytes; SHA-256: `26CA0B061BDAADDDC3B7A0EF318B2BAC1836DFCC12F7C0B4571B4D6962041862`; Authenticode: `NotSigned`.
 - Published prerelease `v0.1.0-alpha.5` with the validated Windows artifact and synchronized `main`.

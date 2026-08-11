@@ -2,6 +2,7 @@
 
 ## 2026-08-10
 
+- Defined detailed, evidence-gated milestones through high-fidelity 1.0 compatibility without claiming Roku OS, firmware, or DRM emulation.
 - Added geometric directional focus navigation with nested translation and visibility handling.
 - Began roadmap 0.2 with safe linear subroutine execution, node aliases, observer capture, and property/observer Inspector panels.
 - Added grouped, source-aware compatibility diagnostics; reduced IEDB output from 49 repeated warnings to 5 actionable entries.
