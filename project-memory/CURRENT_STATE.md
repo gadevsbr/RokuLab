@@ -2,6 +2,9 @@
 
 Community publication readiness: the public README presents the newest validated alpha as the recommended Community Preview with real IEDB preview/editor screenshots, a four-frame GIF, direct verified download, current runtime capabilities, known limitations, and unsigned SmartScreen guidance. GitHub Discussions is enabled, feedback issue `#1` is open, and releases remain correctly marked prerelease.
 
+Published on 2026-08-11: prerelease `v0.1.0-alpha.15` is the recommended Community Preview,
+contains the verified Windows x64 artifact, and `main` is synchronized.
+
 Phase: `0.1.0-alpha.15` runtime-call and observer-correlation validation.
 
 Alpha.15 separates emitted Worker method calls from field mutations and shows their host, method,

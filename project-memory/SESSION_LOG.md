@@ -8,6 +8,8 @@
   the suite now contains 28 Vitest tests. The IEDB E2E flow verifies both diagnostic panels.
 - Generated and validated the unsigned alpha.15 Windows portable (107,901,895 bytes, SHA-256
   `3B80CBE8710ED06A6AEF45E55020EAE1C86B1500CACE99F2DB9240E1111CF996`).
+- Published alpha.15 as the recommended GitHub prerelease, verified its remote asset digest/tag,
+  and updated Community Preview feedback issue `#1`.
 
 - Added a cycle-safe focus chain from emitted `focusedChild` references, clickable Inspector breadcrumbs, and focus-path highlighting without changing hierarchy.
 - Added tests for a three-node focus path and circular focus references; the suite now contains 25 Vitest tests.
