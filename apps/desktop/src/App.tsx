@@ -417,6 +417,15 @@ export function App() {
             <dd>{observer.handler}</dd>
           </dl>
         ))}
+        <h2>EVENTS ({project.events.length})</h2>
+        {project.events.map((event, index) => (
+          <dl key={`${event.nodeId}-${event.field}-${event.handler}-${index}`}>
+            <dt>
+              #{event.nodeId}.{event.field}
+            </dt>
+            <dd>{event.handler}</dd>
+          </dl>
+        ))}
         <h2>MANIFEST</h2>
         {Object.entries(project.manifest).map(([key, value]) => (
           <dl key={key}>

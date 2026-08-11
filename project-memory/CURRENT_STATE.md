@@ -1,6 +1,6 @@
 # Current state
 
-Phase: `0.1.0-alpha.5` geometric-focus milestone locally validated.
+Phase: `0.1.0-alpha.6` reactive-observer milestone locally validated.
 
 Published on 2026-08-10: prerelease `v0.1.0-alpha.5` contains the validated Windows x64 artifact and `main` is synchronized.
 
@@ -30,4 +30,8 @@ Evidence for alpha.5: focus navigation now uses absolute centers derived from ne
 
 The alpha.5 full gate passed: formatting, lint, typecheck, 15 Vitest tests, 3 Playwright tests plus a post-package smoke, all 7 workspace builds, dependency audit, IEDB validation, and Windows packaging. Portable artifact: 98,010,604 bytes; SHA-256 `26CA0B061BDAADDDC3B7A0EF318B2BAC1836DFCC12F7C0B4571B4D6962041862`; Authenticode status `NotSigned`.
 
-Not implemented: general BrightScript control flow, observer dispatch, partial reload, network/player/debugger, signed installers, macOS/Linux artifacts, and physical Roku integration. Final behavior on Roku hardware is not validated. The Windows artifact is portable but not certificate-signed. Monaco's current main bundle is 2.83 MB before gzip and should be split in a future performance cycle.
+Evidence for alpha.6: controlled `if/else` execution, runtime `m.*` state, alias field writes, observer dispatch, event inspection, and same-field cycle protection are covered by unit/integration tests. Routines containing loops remain fail-closed. The IEDB still resolves 32 observers and validates with explicit grouped limitations.
+
+The alpha.6 full gate passed: formatting, lint, typecheck, 17 Vitest tests, 3 Playwright tests plus a post-package smoke, all 7 workspace builds, dependency audit, IEDB validation, and Windows packaging. Portable artifact: 98,014,404 bytes; SHA-256 `4FFC68A1C7DA566AC551D28BDF445F969F92981CEE38DA9EB52BEE811C38EFE9`; Authenticode status `NotSigned`.
+
+Not implemented: BrightScript loops/general expressions, complete observer semantics, partial reload, network/player/debugger, signed installers, macOS/Linux artifacts, and physical Roku integration. Final behavior on Roku hardware is not validated. The Windows artifact is portable but not certificate-signed. Monaco's current main bundle is 2.83 MB before gzip and should be split in a future performance cycle.

@@ -2,6 +2,8 @@
 
 ## 2026-08-10
 
+- Added controlled BrightScript `if/else`, runtime state, reactive alias field writes, observer callback dispatch, event inspection, and same-field cycle protection.
+- Alpha.6 passed formatting, lint, typecheck, 17 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, audit, and IEDB validation. Portable size: 98,014,404 bytes; SHA-256: `4FFC68A1C7DA566AC551D28BDF445F969F92981CEE38DA9EB52BEE811C38EFE9`; Authenticode: `NotSigned`.
 - Expanded the roadmap from six summary lines into gated milestones 0.1 through 1.0 covering reactive runtime, rendering fidelity, Roku APIs, network, media, visual comparison, debugging, and physical-device correlation.
 - Replaced sequential focus cycling with shared, tested SceneGraph geometry that respects nested translations and invisible nodes.
 - Alpha.5 passed formatting, lint, typecheck, 15 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, audit, and IEDB validation. Portable size: 98,010,604 bytes; SHA-256: `26CA0B061BDAADDDC3B7A0EF318B2BAC1836DFCC12F7C0B4571B4D6962041862`; Authenticode: `NotSigned`.

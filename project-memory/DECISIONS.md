@@ -15,3 +15,4 @@
 - 2026-08-10: only BrightScript routines without control-flow statements are recursively executed in the alpha.4 runtime; treating conditional/loop bodies as linear is rejected because it would produce incorrect behavior.
 - 2026-08-10: directional focus uses absolute node centers and a primary-axis plus perpendicular-distance score; sequential wraparound is superseded because it ignores SceneGraph layout.
 - 2026-08-10: high fidelity is measured across layout, focus, state, observers, network, media, and reference-device evidence; visual similarity alone is insufficient, and proprietary OS/DRM behavior remains device-only.
+- 2026-08-10: alpha.6 executes only conditions whose operands are explicitly understood and keeps loop-bearing routines fail-closed; the prior blanket rejection of all control-flow routines is superseded by this guarded subset.

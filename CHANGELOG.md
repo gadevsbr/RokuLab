@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.6 - 2026-08-10
+
+- Evaluate a controlled BrightScript `if/else` subset with literal, variable, field, and comparison expressions.
+- Support runtime `m.*` state and field writes through `findNode` aliases.
+- Dispatch captured `ObserveField` handlers when node fields change.
+- Prevent same-field observer cycles and expose dispatched events in the Inspector.
+- Keep routines containing unsupported loops fail-closed.
+
 ## 0.1.0-alpha.5 - 2026-08-10
 
 - Replace sequential focus cycling with position-aware directional navigation.

@@ -31,6 +31,14 @@ export interface RuntimeObserver {
   line: number;
 }
 
+export interface RuntimeEvent {
+  nodeId: string;
+  field: string;
+  handler: string;
+  source: string;
+  line: number;
+}
+
 export interface ProjectSnapshot {
   rootPath: string;
   manifest: Manifest;
@@ -39,6 +47,7 @@ export interface ProjectSnapshot {
   console: ConsoleEntry[];
   warnings: string[];
   observers: RuntimeObserver[];
+  events: RuntimeEvent[];
 }
 
 export interface ProjectFileContent {

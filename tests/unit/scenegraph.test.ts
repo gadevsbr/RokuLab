@@ -28,6 +28,7 @@ describe('SceneGraph vertical slice', () => {
     expect(result.console[0]?.message).toBe('ready');
     expect(findNode(scene, 'title')?.properties.text).toBe('New');
     expect(result.observers).toEqual([]);
+    expect(result.events).toEqual([]);
   });
   it('executes linear bind routines and records observers', () => {
     const { scene } = parseSceneGraph(xml);
@@ -49,14 +50,37 @@ describe('SceneGraph vertical slice', () => {
       },
     ]);
   });
-  it('does not execute routines containing control flow', () => {
+  it('does not execute routines containing unsupported loops', () => {
     const { scene } = parseSceneGraph(xml);
     const result = runInit(
-      'sub init()\n conditionalWork()\nend sub\nsub conditionalWork()\n if true\n  print "wrong"\n end if\nend sub',
+      'sub init()\n loopWork()\nend sub\nsub loopWork()\n for each item in []\n  print item\n end for\nend sub',
       scene,
     );
     expect(result.console).toEqual([]);
     expect(result.warnings).toEqual(['Unsupported BrightScript statements at component.brs:2']);
+  });
+  it('evaluates supported if branches and dispatches field observers', () => {
+    const { scene } = parseSceneGraph(xml);
+    const result = runInit(
+      'sub init()\n m.title = m.top.FindNode("title")\n m.title.ObserveField("text", "onTitleChanged")\n m.ready = true\n if m.ready = true\n  m.title.text = "Ready"\n else\n  m.title.text = "Wrong"\n end if\nend sub\nsub onTitleChanged()\n print "changed"\nend sub',
+      scene,
+      'Demo.brs',
+    );
+    expect(findNode(scene, 'title')?.properties.text).toBe('Ready');
+    expect(result.console.map(({ message }) => message)).toEqual(['changed']);
+    expect(result.events).toEqual([
+      { nodeId: 'title', field: 'text', handler: 'onTitleChanged', source: 'Demo.brs', line: 6 },
+    ]);
+    expect(result.warnings).toEqual([]);
+  });
+  it('breaks observer cycles for the field currently being dispatched', () => {
+    const { scene } = parseSceneGraph(xml);
+    const result = runInit(
+      'sub init()\n m.title = m.top.FindNode("title")\n m.title.ObserveField("text", "onTitleChanged")\n m.title.text = "First"\nend sub\nsub onTitleChanged()\n m.title.text = "Second"\nend sub',
+      scene,
+    );
+    expect(findNode(scene, 'title')?.properties.text).toBe('Second');
+    expect(result.events).toHaveLength(1);
   });
   it('groups unsupported BrightScript statements into source ranges', () => {
     const { scene } = parseSceneGraph(xml);

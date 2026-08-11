@@ -142,12 +142,13 @@ export async function loadProject(inputPath: string): Promise<ProjectSnapshot> {
       console: [],
       warnings: ['No SceneGraph XML component found'],
       observers: [],
+      events: [],
     };
   const parsed = parseSceneGraph(await readFile(within(rootPath, xmlPath), 'utf8'));
   const scriptUri = parsed.scriptUris[0]?.replace(/^pkg:\//, '');
   const runtime = scriptUri
     ? runInit(await readFile(within(rootPath, scriptUri), 'utf8'), parsed.scene, scriptUri)
-    : { console: [], warnings: [], observers: [] };
+    : { console: [], warnings: [], observers: [], events: [] };
   return {
     rootPath,
     manifest,
@@ -156,5 +157,6 @@ export async function loadProject(inputPath: string): Promise<ProjectSnapshot> {
     console: runtime.console,
     warnings: [...parsed.warnings, ...runtime.warnings],
     observers: runtime.observers,
+    events: runtime.events,
   };
 }

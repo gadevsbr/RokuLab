@@ -38,6 +38,7 @@ Already delivered:
 - safe linear subroutine calls from `init()`;
 - `findNode` aliases and literal field assignments;
 - `ObserveField` registration discovery;
+- controlled `if/else`, runtime state, observer dispatch, and same-field cycle protection;
 - selected-node properties and observer bindings in the Inspector;
 - geometric directional focus using nested translations and visibility.
 
@@ -53,7 +54,7 @@ Remaining SceneGraph work:
 
 - component inheritance, `<interface>` fields, aliases, `onChange`, default values, and field types;
 - reactive property writes that update the renderer immediately;
-- `observeField`, `unobserveField`, callback dispatch, and observer-loop protection;
+- complete `observeField` edge cases, `unobserveField`, callback arguments, and cross-field loop protection;
 - dynamic node creation/removal, `appendChild`, `removeChild`, and `ContentNode` trees;
 - `setFocus`, `hasFocus`, `isInFocusChain`, `focusedChild`, and component `initialFocus`;
 - `onKeyEvent` dispatch for Up, Down, Left, Right, OK, Back, Replay, Options, and media keys;
