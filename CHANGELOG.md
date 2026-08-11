@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.8 - 2026-08-11
+
+- Register and verify the SceneGraph extension explicitly for real channels.
+- Surface live Worker scene/node field mutations and runtime events in the Inspector.
+- Serialize automatic engine restarts after hot reload and expose startup `--project`.
+- Add observer cardinality and IEDB visual navigation/detail/Back compatibility flows.
+
 ## 0.1.0-alpha.7 - 2026-08-11
 
 - Integrate the MIT-licensed BrightScript 15.3-aligned compatibility engine and SceneGraph extension.

@@ -49,15 +49,18 @@ Already delivered:
   interfaces, observers, dynamic nodes, content, focus, and key dispatch;
 - 1080p canvas output, Run/Stop controls, remote/media keys, and engine console events;
 - a pixel-backed Electron test proving that a valid SceneGraph channel draws a frame.
+- live Worker synchronization diagnostics in the Inspector for scene/node field actions,
+  values, addresses, runtime events, input, starts, and execution state;
+- serialized automatic engine restart after project changes, covered end to end;
+- an IEDB reference flow that starts SceneGraph, observes live updates, changes rendered
+  navigation states, opens a detail path, returns with Back, and remains healthy;
+- an observer fixture proving one field change invokes its callback exactly once.
 
 Remaining integration work before 0.2 can close:
 
-- expose the compatibility engine's live node tree, field values, focus chain, observer calls,
-  source stack, and layout bounds through a versioned diagnostic adapter;
+- map anonymous Worker addresses to a hierarchical live node tree with stable component IDs,
+  focus chain, observer-call correlation, source stack, and layout bounds;
 - add validated Inspector field editing and transient overrides against the live engine;
-- restart the engine safely on source changes, with explicit state-loss behavior;
-- run the IEDB navigation-shell reference flow and record initialization, route changes,
-  observer cardinality, Back behavior, and focus restoration evidence;
 - classify unsupported engine behavior explicitly instead of falling back silently to the
   legacy preview; the legacy parser remains a pre-run inspection surface only.
 

@@ -1,6 +1,6 @@
 # Current state
 
-Phase: `0.1.0-alpha.7` compatibility-engine milestone validated and published.
+Phase: `0.1.0-alpha.8` live-runtime diagnostics milestone locally validated; publication pending.
 
 Published on 2026-08-11: prerelease `v0.1.0-alpha.7` contains the validated Windows x64 artifact and `main` is synchronized.
 
@@ -41,3 +41,7 @@ The alpha.6 full gate passed: formatting, lint, typecheck, 17 Vitest tests, 3 Pl
 The new Run path executes full BrightScript and SceneGraph through `brs-engine` 2.3.0 and `brs-scenegraph` 0.3.0. Project ZIP creation and a nontransparent 1080p canvas frame are covered by integration/Electron evidence. The live engine is not yet connected to Inspector editing/diagnostics, hot reload still requires an explicit rerun, and the IEDB navigation reference flow remains unrecorded; therefore roadmap 0.2 is still open. Final Roku-hardware behavior is not validated, and Windows artifacts remain unsigned.
 
 Alpha.7 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, 3 Playwright tests, direct IEDB validation, Windows packaging, and a packaged-app runtime smoke passed. Portable artifact: 107,902,383 bytes; SHA-256 `4B4E73AAEFE8B9FCC27E63BDCBA2884F2DFC94F37D7F22545D969ED47EBBCFB3`; Authenticode status `NotSigned`.
+
+Alpha.8 adds structured live Worker field updates/events in the Inspector, serialized full-restart hot reload, `--project` startup, explicit SceneGraph extension loading, observer cardinality evidence, and an automated IEDB visual navigation/detail/Back flow. Hierarchical runtime node-ID mapping and live Inspector editing remain open, so roadmap 0.2 is not yet closed.
+
+Alpha.8 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, 4 Playwright tests including IEDB and packaged runtime execution, direct IEDB validation, and Windows packaging passed. Portable artifact: 107,904,534 bytes; SHA-256 `D078A23F4D68D08BBD9F16305C0DBFAB54494D50FC3F0F1429153CEE71EAA060`; Authenticode status `NotSigned`.

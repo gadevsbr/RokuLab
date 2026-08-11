@@ -1,8 +1,8 @@
 # Next steps
 
-1. Build a diagnostic bridge from the compatibility engine into the live Inspector: nodes, fields, focus, observers, events, layout bounds, and stack traces.
-2. Run and document the IEDB navigation-shell flow through the compatibility engine; fix or classify every blocker.
-3. Add safe engine restart on hot reload and Inspector field overrides.
+1. Map live Worker addresses to the hierarchical SceneGraph tree, stable IDs, focus chain, observer calls, source stacks, and layout bounds.
+2. Add validated live Inspector field editing and transient overrides.
+3. Expand IEDB reference flows across library/profile/network-loaded states with deterministic mocks.
 4. Add macOS/Linux artifacts and GitHub release automation.
 5. Add source diagnostics and language-server integration to Monaco.
 6. Add certificate-backed Windows signing before promoting a future build beyond prerelease.

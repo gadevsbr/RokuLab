@@ -14,6 +14,9 @@ const directory = path.dirname(fileURLToPath(import.meta.url));
 const watchers = new Map<number, FSWatcher>();
 const roots = new Map<number, string>();
 const reloadTimers = new Map<number, NodeJS.Timeout>();
+const startupProject = process.argv
+  .find((argument) => argument.startsWith('--project='))
+  ?.slice('--project='.length);
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -97,6 +100,10 @@ ipcMain.handle('project:choose', async (event) => {
   });
   if (selected.canceled || !selected.filePaths[0]) return null;
   return activateProject(BrowserWindow.fromWebContents(event.sender)!, selected.filePaths[0]);
+});
+ipcMain.handle('project:initial', (event) => {
+  if (!startupProject || !path.isAbsolute(startupProject)) return null;
+  return activateProject(BrowserWindow.fromWebContents(event.sender)!, startupProject);
 });
 ipcMain.handle('project:openPath', (event, selectedPath: unknown) => {
   if (typeof selectedPath !== 'string' || !path.isAbsolute(selectedPath))

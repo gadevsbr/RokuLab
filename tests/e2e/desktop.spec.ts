@@ -1,5 +1,6 @@
 import { _electron as electron, expect, test, type ElectronApplication } from '@playwright/test';
 import { execFile } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -16,6 +17,17 @@ async function stopTestApplication(app: ElectronApplication): Promise<void> {
     app.process().kill('SIGKILL');
   }
   await closed;
+}
+
+async function canvasSignature(window: Awaited<ReturnType<ElectronApplication['firstWindow']>>) {
+  return window.locator('#display').evaluate((canvas: HTMLCanvasElement) => {
+    const pixels = canvas.getContext('2d')?.getImageData(0, 0, canvas.width, canvas.height).data;
+    if (!pixels) return 0;
+    let hash = 2166136261;
+    for (let index = 0; index < pixels.length; index += 997)
+      hash = Math.imul(hash ^ pixels[index], 16777619);
+    return hash >>> 0;
+  });
 }
 
 test('desktop opens the bundled project and renders the vertical slice', async () => {
@@ -43,6 +55,9 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     });
     await expect(window.locator('#display')).toBeVisible();
     await expect(window.getByRole('button', { name: 'Stop', exact: true })).toBeEnabled();
+    await expect(
+      window.locator('.output p').filter({ hasText: 'Observer fired: true' }),
+    ).toHaveCount(1);
     await expect
       .poll(
         () =>
@@ -56,8 +71,8 @@ test('desktop opens the bundled project and renders the vertical slice', async (
         { timeout: 15_000 },
       )
       .toBe(true);
-    await window.getByRole('button', { name: 'Stop', exact: true }).click();
-    await expect(window.locator('#display')).toBeHidden();
+    await window.getByRole('button', { name: 'Right', exact: true }).click();
+    await expect(window.getByText('last input').locator('..')).toContainText('right');
     await window.getByRole('button', { name: 'Label #title' }).click();
     await expect(window.getByRole('heading', { name: 'PROPERTIES #title' })).toBeVisible();
     await expect(window.getByTitle('Hello from RokuLab')).toBeVisible();
@@ -65,7 +80,12 @@ test('desktop opens the bundled project and renders the vertical slice', async (
       scriptPath,
       'sub init()\n  print "Hot reload verified"\n  m.top.findNode("title").text = "Hot Reload Works"\nend sub\n',
     );
-    await expect(window.getByText('Hot reloaded components/MainScene.brs')).toBeVisible();
+    await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(window.getByText('starts').locator('..')).toContainText('2');
+    await window.getByRole('button', { name: 'Stop', exact: true }).click();
+    await expect(window.locator('#display')).toBeHidden();
     await expect(window.locator('[data-node="title"]')).toHaveText('Hot Reload Works');
     await expect(window.getByText('Hot reload verified')).toBeVisible();
     await window.getByRole('button', { name: '. MainScene.brs' }).click();
@@ -93,6 +113,55 @@ test('packaged Windows app opens its bundled example', async () => {
       timeout: 15_000,
     });
     await expect(window.locator('#display')).toBeVisible();
+  } finally {
+    await stopTestApplication(app);
+  }
+});
+
+test('IEDB navigation shell starts in the compatibility engine', async () => {
+  const project = 'C:\\Users\\Hans Braga\\Desktop\\IEB\\roku';
+  test.skip(!existsSync(project), 'Local IEDB reference channel is unavailable');
+  const environment = { ...process.env };
+  delete environment.ELECTRON_RUN_AS_NODE;
+  const app = await electron.launch({
+    executablePath: path.resolve(
+      'node_modules/.pnpm/electron@43.3.0/node_modules/electron/dist/electron.exe',
+    ),
+    args: [path.resolve('apps/desktop'), `--project=${project}`],
+    env: environment,
+  });
+  try {
+    const window = await app.firstWindow();
+    await expect(window.getByText('IEDB').first()).toBeVisible({ timeout: 15_000 });
+    await window.getByRole('button', { name: 'Run', exact: true }).click();
+    await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(window.getByText('started').first()).toBeVisible({ timeout: 30_000 });
+    await expect(
+      window.getByRole('heading', { name: /LIVE FIELD UPDATES \([1-9]\d*\)/ }),
+    ).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(window.locator('#display')).toBeVisible();
+    const home = await canvasSignature(window);
+    await window.getByRole('button', { name: 'Down', exact: true }).click();
+    await window.getByRole('button', { name: 'Right', exact: true }).click();
+    await expect(window.getByText('last input').locator('..')).toContainText('right');
+    await expect.poll(() => canvasSignature(window)).not.toBe(home);
+    const exploreFocus = await canvasSignature(window);
+    await window.getByRole('button', { name: 'OK', exact: true }).click();
+    await expect.poll(() => canvasSignature(window), { timeout: 15_000 }).not.toBe(exploreFocus);
+    await window.getByRole('button', { name: 'Left', exact: true }).click();
+    await window.getByRole('button', { name: 'OK', exact: true }).click();
+    await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible();
+    const detail = await canvasSignature(window);
+    await window.getByRole('button', { name: 'Back', exact: true }).click();
+    await expect(window.getByText('last input').locator('..')).toContainText('back');
+    await expect.poll(() => canvasSignature(window), { timeout: 15_000 }).not.toBe(detail);
+    await expect(
+      window.locator('.inspector dt').getByText('state', { exact: true }).locator('..'),
+    ).toContainText('running');
   } finally {
     await stopTestApplication(app);
   }

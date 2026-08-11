@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('rokulab', {
   chooseProject: () => ipcRenderer.invoke('project:choose'),
+  initialProject: () => ipcRenderer.invoke('project:initial'),
   openPath: (projectPath: string) => ipcRenderer.invoke('project:openPath', projectPath),
   openExample: () => ipcRenderer.invoke('project:openExample'),
   readFile: (relative: string) => ipcRenderer.invoke('project:readFile', relative),

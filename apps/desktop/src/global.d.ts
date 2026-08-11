@@ -3,6 +3,7 @@ declare global {
   interface Window {
     rokulab?: {
       chooseProject(): Promise<ProjectSnapshot | null>;
+      initialProject(): Promise<ProjectSnapshot | null>;
       openPath(path: string): Promise<ProjectSnapshot>;
       openExample(): Promise<ProjectSnapshot>;
       readFile(relative: string): Promise<ProjectFileContent>;

@@ -16,6 +16,31 @@ import {
 
 const sourcePattern = /(^manifest$|\.(brs|xml|json|txt)$)/i;
 
+interface EngineDiagnostic {
+  event: string;
+  detail: string;
+  timestamp: string;
+}
+
+interface EngineFieldUpdate {
+  action: string;
+  address: string;
+  key: string;
+  type: string;
+  value: string;
+}
+
+function serializeDiagnostic(value: unknown): string {
+  try {
+    const serialized = JSON.stringify(value, (_key, item) =>
+      typeof item === 'bigint' ? item.toString() : item,
+    );
+    return (serialized ?? String(value)).slice(0, 2_000);
+  } catch {
+    return String(value).slice(0, 2_000);
+  }
+}
+
 function FileTree({
   entries,
   selected,
@@ -175,6 +200,11 @@ export function App() {
   const [focusedNode, setFocusedNode] = useState<string>();
   const [engineActive, setEngineActive] = useState(false);
   const [engineConsole, setEngineConsole] = useState<ConsoleEntry[]>([]);
+  const [engineVersion, setEngineVersion] = useState('');
+  const [engineRestarts, setEngineRestarts] = useState(0);
+  const [engineEvents, setEngineEvents] = useState<EngineDiagnostic[]>([]);
+  const [engineFields, setEngineFields] = useState<EngineFieldUpdate[]>([]);
+  const [lastEngineInput, setLastEngineInput] = useState('');
   const projectRoot = project?.rootPath;
   const focusTargets = useMemo(
     () => (project?.scene ? collectFocusTargets(project.scene) : []),
@@ -226,70 +256,107 @@ export function App() {
     }
   }, [draft, dirty, file]);
 
+  const sendEngineInput = useCallback((key: string) => {
+    setLastEngineInput(key);
+    void sendCompatibilityKey(key);
+  }, []);
+
   const move = useCallback(
     (direction: FocusDirection) => {
-      if (engineActive) void sendCompatibilityKey(direction);
+      if (engineActive) sendEngineInput(direction);
       else setFocusedNode((current) => nextFocusTarget(focusTargets, current, direction));
     },
-    [engineActive, focusTargets],
+    [engineActive, focusTargets, sendEngineInput],
   );
 
-  const runEngine = useCallback(async () => {
-    if (!project || !window.rokulab) return;
-    try {
-      setError('');
-      setEngineConsole([]);
-      setEngineActive(true);
-      setWorkspaceTab('Preview');
-      const archive = await window.rokulab.archiveProject();
-      const version = await startCompatibilityEngine(
-        archive,
-        project.manifest.title ?? 'RokuLab-channel',
-        (event, data) => {
-          if (event === 'debug') {
-            const detail = (data ?? {}) as { level?: string; content?: unknown };
-            const level: ConsoleEntry['level'] =
-              detail.level === 'error' || detail.level === 'warn' || detail.level === 'debug'
-                ? detail.level
-                : 'info';
-            setEngineConsole((entries) => [
-              ...entries.slice(-499),
-              {
-                timestamp: new Date().toISOString(),
-                level,
-                source: 'brs-engine',
-                message: String(detail.content ?? ''),
-              },
+  const runEngine = useCallback(
+    async (targetProject: ProjectSnapshot | undefined = project) => {
+      if (!targetProject || !window.rokulab) return;
+      try {
+        setError('');
+        setEngineConsole([]);
+        setStatus(
+          engineActive ? 'Restarting compatibility engine...' : 'Starting compatibility engine...',
+        );
+        setWorkspaceTab('Preview');
+        const archive = await window.rokulab.archiveProject();
+        const version = await startCompatibilityEngine(
+          archive,
+          targetProject.manifest.title ?? 'RokuLab-channel',
+          (event, data) => {
+            const detail = data === undefined ? '' : serializeDiagnostic(data);
+            setEngineEvents((events) => [
+              ...events.slice(-99),
+              { event, detail, timestamp: new Date().toISOString() },
             ]);
-          } else if (event === 'error') {
-            setError(typeof data === 'string' ? data : JSON.stringify(data));
-          } else if (event === 'end') {
-            setEngineActive(false);
-            setStatus('Compatibility engine stopped');
-          } else if (!['audio', 'video', 'display', 'stats'].includes(event)) {
-            setEngineConsole((entries) => [
-              ...entries.slice(-499),
-              {
-                timestamp: new Date().toISOString(),
-                level: 'debug',
-                source: 'brs-engine',
-                message: `${event}${data === undefined ? '' : `: ${typeof data === 'string' ? data : JSON.stringify(data)}`}`,
-              },
-            ]);
-          }
-        },
-      );
-      setStatus(`Compatibility engine ${version} running`);
-    } catch (reason) {
-      setEngineActive(false);
-      setError(reason instanceof Error ? reason.message : String(reason));
-    }
-  }, [project]);
+            if (event === 'debug') {
+              const debug = (data ?? {}) as { level?: string; content?: unknown };
+              const level: ConsoleEntry['level'] =
+                debug.level === 'error' || debug.level === 'warn' || debug.level === 'debug'
+                  ? debug.level
+                  : 'info';
+              setEngineConsole((entries) => [
+                ...entries.slice(-499),
+                {
+                  timestamp: new Date().toISOString(),
+                  level,
+                  source: 'brs-engine',
+                  message: String(debug.content ?? ''),
+                },
+              ]);
+            } else if (event === 'worker-update') {
+              const update = data as {
+                action: string;
+                address: string;
+                key: string;
+                type: string;
+                value: unknown;
+              };
+              setEngineFields((updates) => [
+                ...updates.slice(-99),
+                { ...update, value: serializeDiagnostic(update.value) },
+              ]);
+            } else if (event === 'error') {
+              setError(typeof data === 'string' ? data : serializeDiagnostic(data));
+            } else if (event === 'closed') {
+              setEngineActive(false);
+              setStatus('Compatibility engine stopped');
+            } else if (!['audio', 'video', 'display', 'stats'].includes(event)) {
+              setEngineConsole((entries) => [
+                ...entries.slice(-499),
+                {
+                  timestamp: new Date().toISOString(),
+                  level: 'debug',
+                  source: 'brs-engine',
+                  message: `${event}${data === undefined ? '' : `: ${serializeDiagnostic(data)}`}`,
+                },
+              ]);
+            }
+          },
+        );
+        setEngineVersion(version);
+        setEngineActive(true);
+        setEngineRestarts((value) => value + 1);
+        setStatus(`Compatibility engine ${version} running`);
+      } catch (reason) {
+        setEngineActive(false);
+        setError(reason instanceof Error ? reason.message : String(reason));
+      }
+    },
+    [engineActive, project],
+  );
 
   const stopEngine = useCallback(async () => {
     await stopCompatibilityEngine();
     setEngineActive(false);
     setStatus('Compatibility engine stopped');
+  }, []);
+
+  useEffect(() => {
+    void window.rokulab
+      ?.initialProject()
+      .then((initial) => initial && setProject(initial))
+      .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
   }, []);
 
   useEffect(() => {
@@ -301,7 +368,10 @@ export function App() {
     if (!api || !projectRoot) return;
     const removeChange = api.onProjectChanged((change) => {
       setProject(change.snapshot);
-      setStatus(`Hot reloaded ${change.changedPath}`);
+      if (engineActive) {
+        setStatus(`Restarting after ${change.changedPath}`);
+        void runEngine(change.snapshot);
+      } else setStatus(`Hot reloaded ${change.changedPath}`);
       if (file?.path === change.changedPath && !dirty) void openFile(change.changedPath);
     });
     const removeError = api.onWatchError(setError);
@@ -309,7 +379,7 @@ export function App() {
       removeChange();
       removeError();
     };
-  }, [dirty, file?.path, projectRoot]);
+  }, [dirty, engineActive, file?.path, projectRoot, runEngine]);
 
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
@@ -329,12 +399,12 @@ export function App() {
       if (event.key === 'ArrowRight') move('right');
       if (event.key === 'ArrowUp') move('up');
       if (event.key === 'ArrowLeft') move('left');
-      if (engineActive && event.key === 'Enter') void sendCompatibilityKey('select');
-      if (engineActive && event.key === 'Escape') void sendCompatibilityKey('back');
+      if (engineActive && event.key === 'Enter') sendEngineInput('select');
+      if (engineActive && event.key === 'Escape') sendEngineInput('back');
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [engineActive, move, workspaceTab]);
+  }, [engineActive, move, sendEngineInput, workspaceTab]);
 
   if (!project)
     return (
@@ -429,31 +499,20 @@ export function App() {
               </div>
             </div>
             <div className="remote">
-              <button onClick={() => engineActive && void sendCompatibilityKey('back')}>
-                Back
-              </button>
+              <button onClick={() => engineActive && sendEngineInput('back')}>Back</button>
               <button onClick={() => move('up')}>Up</button>
               <div>
                 <button onClick={() => move('left')}>Left</button>
-                <button
-                  className="ok"
-                  onClick={() => engineActive && void sendCompatibilityKey('select')}
-                >
+                <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
                   OK
                 </button>
                 <button onClick={() => move('right')}>Right</button>
               </div>
               <button onClick={() => move('down')}>Down</button>
               <div>
-                <button onClick={() => engineActive && void sendCompatibilityKey('rev')}>
-                  Rev
-                </button>
-                <button onClick={() => engineActive && void sendCompatibilityKey('play')}>
-                  Play
-                </button>
-                <button onClick={() => engineActive && void sendCompatibilityKey('fwd')}>
-                  Fwd
-                </button>
+                <button onClick={() => engineActive && sendEngineInput('rev')}>Rev</button>
+                <button onClick={() => engineActive && sendEngineInput('play')}>Play</button>
+                <button onClick={() => engineActive && sendEngineInput('fwd')}>Fwd</button>
               </div>
               <small>Arrow keys | Enter | Escape</small>
             </div>
@@ -482,6 +541,43 @@ export function App() {
         ) : null}
       </section>
       <aside className="inspector">
+        <h2>RUNTIME</h2>
+        <dl>
+          <dt>state</dt>
+          <dd>{engineActive ? 'running' : 'stopped'}</dd>
+        </dl>
+        <dl>
+          <dt>engine</dt>
+          <dd>{engineVersion || 'not started'}</dd>
+        </dl>
+        <dl>
+          <dt>starts</dt>
+          <dd>{engineRestarts}</dd>
+        </dl>
+        <dl>
+          <dt>last input</dt>
+          <dd>{lastEngineInput || 'none'}</dd>
+        </dl>
+        <dl>
+          <dt>canvas</dt>
+          <dd>1920 x 1080</dd>
+        </dl>
+        <h2>RUNTIME EVENTS ({engineEvents.length})</h2>
+        {engineEvents.slice(-10).map((entry, index) => (
+          <dl key={`${entry.timestamp}-${entry.event}-${index}`}>
+            <dt>{entry.event}</dt>
+            <dd title={entry.detail}>{entry.detail || entry.timestamp.slice(11, 19)}</dd>
+          </dl>
+        ))}
+        <h2>LIVE FIELD UPDATES ({engineFields.length})</h2>
+        {engineFields.slice(-20).map((update, index) => (
+          <dl key={`${update.address}-${update.key}-${update.action}-${index}`}>
+            <dt title={`${update.type}:${update.address}`}>
+              {update.action} {update.key}
+            </dt>
+            <dd title={update.value}>{update.value}</dd>
+          </dl>
+        ))}
         <h2>SCENEGRAPH</h2>
         {project.scene && (
           <ul className="tree">

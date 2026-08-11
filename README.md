@@ -19,16 +19,17 @@ Open `examples/hello-world` from the welcome screen. RokuLab parses its manifest
 
 ## Current status
 
-| Feature                        | Status              |
-| ------------------------------ | ------------------- |
-| Project/manifest loading       | Supported           |
-| SceneGraph XML and basic nodes | Partial             |
-| BrightScript `init()`/`print`  | Experimental subset |
-| Virtual remote and focus       | Partial             |
-| Monaco source editor           | Supported           |
-| Hot reload                     | Full-project reload |
-| Network/player/debugger        | Planned             |
-| Physical Roku deploy           | Planned             |
+| Feature                        | Status                            |
+| ------------------------------ | --------------------------------- |
+| Project/manifest loading       | Supported                         |
+| SceneGraph XML and basic nodes | Partial                           |
+| BrightScript execution         | Experimental full runtime adapter |
+| SceneGraph canvas              | Experimental runtime adapter      |
+| Virtual remote and focus       | Partial                           |
+| Monaco source editor           | Supported                         |
+| Hot reload                     | Serialized engine restart         |
+| Network/player/debugger        | Planned                           |
+| Physical Roku deploy           | Planned                           |
 
 See [compatibility details](docs/COMPATIBILITY.md), [architecture](docs/ARCHITECTURE.md), and [roadmap](docs/ROADMAP.md).
 

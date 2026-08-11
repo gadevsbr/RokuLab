@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component name="MainScene" extends="Scene">
   <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+  <interface>
+    <field id="ready" type="boolean" value="false" />
+  </interface>
   <children>
     <Rectangle id="background" width="1920" height="1080" color="#101a2d">
       <Label id="title" translation="520,360" text="Loading RokuLab…" color="#f5f7fb" />
@@ -9,4 +12,3 @@
     </Rectangle>
   </children>
 </component>
-
