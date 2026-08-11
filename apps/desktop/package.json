@@ -1,6 +1,6 @@
 {
   "name": "@rokulab/desktop",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@monaco-editor/react": "4.7.0",
     "@rokulab/project-loader": "workspace:*",
+    "@rokulab/scenegraph": "workspace:*",
     "@rokulab/shared": "workspace:*",
     "chokidar": "5.0.0",
     "monaco-editor": "0.56.0",

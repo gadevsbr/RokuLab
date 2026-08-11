@@ -13,3 +13,4 @@
 - 2026-08-10: the project entry component follows `CreateScene()` from `source/main.brs`; alphabetical first-XML selection is superseded because Roku channels commonly place nonvisual Task components before their Scene.
 - 2026-08-10: unsupported compatibility diagnostics are grouped by node type/count and BrightScript line range; per-occurrence warnings are superseded because they obscure distinct missing capabilities.
 - 2026-08-10: only BrightScript routines without control-flow statements are recursively executed in the alpha.4 runtime; treating conditional/loop bodies as linear is rejected because it would produce incorrect behavior.
+- 2026-08-10: directional focus uses absolute node centers and a primary-axis plus perpendicular-distance score; sequential wraparound is superseded because it ignores SceneGraph layout.

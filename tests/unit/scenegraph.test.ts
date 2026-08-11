@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { findNode, parseSceneGraph } from '@rokulab/scenegraph';
+import {
+  collectFocusTargets,
+  findNode,
+  nextFocusTarget,
+  parseSceneGraph,
+} from '@rokulab/scenegraph';
 import { runInit } from '@rokulab/brightscript-runtime';
 
 const xml = `<component name="Demo" extends="Scene"><script uri="pkg:/components/Demo.brs"/><children><Group id="root"><Label id="title" text="Old" translation="10,20"/></Group></children></component>`;
@@ -67,5 +72,19 @@ describe('SceneGraph vertical slice', () => {
       '<component name="Demo" extends="Scene"><children><Group><Video/><Video/></Group></children></component>',
     );
     expect(parsed.warnings).toEqual(['Video is not rendered in this alpha (2 nodes)']);
+  });
+  it('moves focus geometrically using accumulated translations', () => {
+    const parsed = parseSceneGraph(
+      '<component name="Focus" extends="Scene"><children><Group translation="100,50"><Button id="topLeft" translation="0,0"/><Button id="topRight" translation="200,0"/><Button id="bottomLeft" translation="0,200"/><Button id="hidden" visible="false" translation="200,200"/></Group></children></component>',
+    );
+    const targets = collectFocusTargets(parsed.scene);
+    expect(targets).toEqual([
+      { id: 'topLeft', x: 100, y: 50 },
+      { id: 'topRight', x: 300, y: 50 },
+      { id: 'bottomLeft', x: 100, y: 250 },
+    ]);
+    expect(nextFocusTarget(targets, 'topLeft', 'right')).toBe('topRight');
+    expect(nextFocusTarget(targets, 'topLeft', 'down')).toBe('bottomLeft');
+    expect(nextFocusTarget(targets, 'bottomLeft', 'right')).toBe('topRight');
   });
 });

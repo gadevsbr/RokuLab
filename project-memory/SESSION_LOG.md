@@ -2,6 +2,8 @@
 
 ## 2026-08-10
 
+- Replaced sequential focus cycling with shared, tested SceneGraph geometry that respects nested translations and invisible nodes.
+- Alpha.5 passed formatting, lint, typecheck, 15 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, audit, and IEDB validation. Portable size: 98,010,604 bytes; SHA-256: `26CA0B061BDAADDDC3B7A0EF318B2BAC1836DFCC12F7C0B4571B4D6962041862`; Authenticode: `NotSigned`.
 - Started roadmap 0.2: added safe linear subroutine execution, `findNode` aliases, observer capture, and selected-node property inspection.
 - The IEDB channel now exposes 32 observer bindings in the Inspector; unresolved Timer creation and control-flow routines remain explicit diagnostics.
 - Alpha.4 passed formatting, lint, typecheck, 14 Vitest tests, 3 Playwright tests plus a post-package smoke, all workspace builds, audit, and IEDB validation. Portable size: 98,008,761 bytes; SHA-256: `C3978D1EE69E727881AB565BA98D2ABB75EAB9AE2F3E2D7B1258FFD582E80843`; Authenticode: `NotSigned`.

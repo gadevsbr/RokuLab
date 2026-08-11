@@ -7,7 +7,7 @@ Statuses: supported, partial, experimental, unsupported.
 | manifest                                    | supported    | Key/value parsing, comments, validation          |
 | Scene, Group, Rectangle, Label, Poster      | partial      | XML fields and child tree                        |
 | `findNode`                                  | supported    | Scene tree ID lookup                             |
-| focus/navigation                            | partial      | Focusable node order and directional keys        |
+| focus/navigation                            | partial      | Geometry, nested translation, visibility         |
 | BrightScript `init()`, linear subs, `print` | experimental | Control-flow routines remain diagnostic-only     |
 | `m.top.findNode(...).field = value`         | experimental | Literal assignment subset                        |
 | Monaco source editing                       | supported    | `.brs`, `.xml`, `.json`, `.txt`, and `manifest`  |

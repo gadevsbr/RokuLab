@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.5 - 2026-08-10
+
+- Replace sequential focus cycling with position-aware directional navigation.
+- Accumulate nested SceneGraph translations when locating focus targets.
+- Exclude invisible nodes and keep the current target when no directional candidate exists.
+- Share and unit-test focus geometry independently from Electron.
+
 ## 0.1.0-alpha.4 - 2026-08-10
 
 - Execute safe linear BrightScript subroutines called by `init()` while leaving control-flow routines explicitly unsupported.

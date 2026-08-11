@@ -8,6 +8,14 @@ export class SceneGraphParseError extends Error {
 const supported = new Set(['Scene', 'Group', 'Rectangle', 'Label', 'Poster', 'Button']);
 const arrayFields = new Set(['translation', 'scale']);
 
+export type FocusDirection = 'up' | 'down' | 'left' | 'right';
+
+export interface FocusTarget {
+  id: string;
+  x: number;
+  y: number;
+}
+
 function valueOf(key: string, value: unknown): unknown {
   if (typeof value !== 'string') return value;
   if (arrayFields.has(key))
@@ -119,4 +127,48 @@ export function findNode(root: SceneNodeData, id: string): SceneNodeData | undef
     if (found) return found;
   }
   return undefined;
+}
+
+export function collectFocusTargets(root: SceneNodeData, parentX = 0, parentY = 0): FocusTarget[] {
+  const translation = root.properties.translation;
+  const x =
+    parentX +
+    (Array.isArray(translation) && typeof translation[0] === 'number' ? translation[0] : 0);
+  const y =
+    parentY +
+    (Array.isArray(translation) && typeof translation[1] === 'number' ? translation[1] : 0);
+  if (root.properties.visible === false) return [];
+  const width = typeof root.properties.width === 'number' ? root.properties.width : 0;
+  const height = typeof root.properties.height === 'number' ? root.properties.height : 0;
+  return [
+    ...(root.focusable && root.id ? [{ id: root.id, x: x + width / 2, y: y + height / 2 }] : []),
+    ...root.children.flatMap((child) => collectFocusTargets(child, x, y)),
+  ];
+}
+
+export function nextFocusTarget(
+  targets: FocusTarget[],
+  currentId: string | undefined,
+  direction: FocusDirection,
+): string | undefined {
+  if (targets.length === 0) return undefined;
+  const current = targets.find(({ id }) => id === currentId) ?? targets[0]!;
+  const ranked = targets
+    .filter(({ id }) => id !== current.id)
+    .map((target) => {
+      const dx = target.x - current.x;
+      const dy = target.y - current.y;
+      const primary = direction === 'left' || direction === 'right' ? Math.abs(dx) : Math.abs(dy);
+      const perpendicular =
+        direction === 'left' || direction === 'right' ? Math.abs(dy) : Math.abs(dx);
+      const eligible =
+        (direction === 'left' && dx < 0) ||
+        (direction === 'right' && dx > 0) ||
+        (direction === 'up' && dy < 0) ||
+        (direction === 'down' && dy > 0);
+      return { target, eligible, score: primary + perpendicular * 2 };
+    })
+    .filter(({ eligible }) => eligible)
+    .sort((left, right) => left.score - right.score);
+  return ranked[0]?.target.id ?? current.id;
 }

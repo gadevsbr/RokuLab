@@ -1,5 +1,6 @@
 import Editor, { type BeforeMount } from '@monaco-editor/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { collectFocusTargets, nextFocusTarget, type FocusDirection } from '@rokulab/scenegraph';
 import type {
   ProjectEntry,
   ProjectFileContent,
@@ -106,12 +107,6 @@ function RenderNode({ node, focused }: { node: SceneNodeData; focused: string | 
   );
 }
 
-function collectFocusable(node?: SceneNodeData): string[] {
-  return node
-    ? [...(node.focusable && node.id ? [node.id] : []), ...node.children.flatMap(collectFocusable)]
-    : [];
-}
-
 function findSceneNode(
   node: SceneNodeData | undefined,
   id: string | undefined,
@@ -171,9 +166,12 @@ export function App() {
   const [file, setFile] = useState<ProjectFileContent>();
   const [draft, setDraft] = useState('');
   const [dirty, setDirty] = useState(false);
-  const [focusIndex, setFocusIndex] = useState(0);
+  const [focusedNode, setFocusedNode] = useState<string>();
   const projectRoot = project?.rootPath;
-  const focusable = useMemo(() => collectFocusable(project?.scene), [project]);
+  const focusTargets = useMemo(
+    () => (project?.scene ? collectFocusTargets(project.scene) : []),
+    [project?.scene],
+  );
   const inspectedNode = useMemo(
     () => findSceneNode(project?.scene, selectedNode),
     [project?.scene, selectedNode],
@@ -221,12 +219,14 @@ export function App() {
   }, [draft, dirty, file]);
 
   const move = useCallback(
-    (direction: number) =>
-      setFocusIndex((current) =>
-        focusable.length ? (current + direction + focusable.length) % focusable.length : 0,
-      ),
-    [focusable.length],
+    (direction: FocusDirection) =>
+      setFocusedNode((current) => nextFocusTarget(focusTargets, current, direction)),
+    [focusTargets],
   );
+
+  useEffect(() => {
+    if (!focusTargets.some(({ id }) => id === focusedNode)) setFocusedNode(focusTargets[0]?.id);
+  }, [focusTargets, focusedNode]);
 
   useEffect(() => {
     const api = window.rokulab;
@@ -257,8 +257,10 @@ export function App() {
   useEffect(() => {
     if (workspaceTab !== 'Preview') return;
     const key = (event: KeyboardEvent) => {
-      if (['ArrowDown', 'ArrowRight'].includes(event.key)) move(1);
-      if (['ArrowUp', 'ArrowLeft'].includes(event.key)) move(-1);
+      if (event.key === 'ArrowDown') move('down');
+      if (event.key === 'ArrowRight') move('right');
+      if (event.key === 'ArrowUp') move('up');
+      if (event.key === 'ArrowLeft') move('left');
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
@@ -343,19 +345,17 @@ export function App() {
             </div>
             <div className="tv">
               <div className="screen">
-                {project.scene && (
-                  <RenderNode node={project.scene} focused={focusable[focusIndex]} />
-                )}
+                {project.scene && <RenderNode node={project.scene} focused={focusedNode} />}
               </div>
             </div>
             <div className="remote">
-              <button onClick={() => move(-1)}>Up</button>
+              <button onClick={() => move('up')}>Up</button>
               <div>
-                <button onClick={() => move(-1)}>Left</button>
+                <button onClick={() => move('left')}>Left</button>
                 <button className="ok">OK</button>
-                <button onClick={() => move(1)}>Right</button>
+                <button onClick={() => move('right')}>Right</button>
               </div>
-              <button onClick={() => move(1)}>Down</button>
+              <button onClick={() => move('down')}>Down</button>
               <small>Arrow keys | Enter | Escape</small>
             </div>
           </>
