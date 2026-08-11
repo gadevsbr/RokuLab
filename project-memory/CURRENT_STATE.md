@@ -1,6 +1,8 @@
 # Current state
 
-Phase: `0.1.0-alpha.9` watcher-shutdown hotfix locally validated; publication pending.
+Phase: `0.1.0-alpha.9` watcher-shutdown hotfix validated and published.
+
+Published on 2026-08-11: prerelease `v0.1.0-alpha.9` contains the validated Windows x64 artifact and `main` is synchronized.
 
 Published on 2026-08-11: prerelease `v0.1.0-alpha.8` contains the validated Windows x64 artifact and `main` is synchronized.
 

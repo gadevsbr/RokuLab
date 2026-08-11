@@ -15,6 +15,7 @@
 - Published prerelease `v0.1.0-alpha.8` with the validated Windows artifact and synchronized `main`.
 - Fixed the portable shutdown exception by capturing `webContents.id` before destruction, cancelling pending reload timers, and preventing watcher IPC after window teardown. A graceful-close E2E reproduces the prior race with a pending filesystem event.
 - Alpha.9 passed formatting, lint, typecheck, 18 Vitest tests, all workspace builds, audit, 5 Playwright tests, Windows packaging, and packaged graceful shutdown. Portable size: 107,903,275 bytes; SHA-256: `2C727EC6A2674008E81FCCC93F131EA1E02C40DBE52671AC4B0ECD0B263FF952`; Authenticode: `NotSigned`.
+- Published prerelease `v0.1.0-alpha.9` with the validated Windows artifact and synchronized `main`.
 
 ## 2026-08-10
 
