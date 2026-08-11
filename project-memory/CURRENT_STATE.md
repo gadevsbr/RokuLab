@@ -2,6 +2,8 @@
 
 Phase: `0.1.0-alpha.5` geometric-focus milestone locally validated.
 
+Published on 2026-08-10: prerelease `v0.1.0-alpha.5` contains the validated Windows x64 artifact and `main` is synchronized.
+
 Published on 2026-08-10: prerelease `v0.1.0-alpha.4` contains the validated Windows x64 artifact and `main` is synchronized.
 
 Published on 2026-08-10: `main` is synchronized with GitHub and prerelease `v0.1.0-alpha.3` contains the validated Windows x64 portable artifact.
