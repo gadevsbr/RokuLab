@@ -2,6 +2,8 @@
 
 ## 2026-08-11
 
+- Published the Community Preview presentation, reproducible media capture scripts, Discussions, and the public alpha.13 feedback channel.
+
 - Added cycle-safe live SceneGraph hierarchy and geometry inspection from serialized Worker metadata.
 
 - Added stable live Worker node correlation and selectable live field snapshots to the Inspector without inventing unavailable hierarchy metadata.

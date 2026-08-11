@@ -2,6 +2,9 @@
 
 ## 2026-08-11
 
+- Prepared the public Community Preview page with real IEDB screenshots, a validated four-frame GIF, direct alpha.13 download/SHA, current capabilities, limitations, and SmartScreen guidance.
+- Enabled GitHub Discussions, opened Community Preview feedback issue `#1`, and renamed alpha.13 as the recommended testing release while preserving prerelease status.
+
 - Added cycle-safe live parent/child hierarchy from serialized `_children_` metadata and nested Inspector rendering.
 - Added parent and absolute-bounds inspection, with tests for nested translations, nonstructural `focusedChild`, and circular SceneGraph references; the suite now contains 23 Vitest tests.
 - Generated and validated the unsigned alpha.13 Windows portable (107,898,990 bytes, SHA-256 `D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC`).

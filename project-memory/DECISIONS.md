@@ -2,6 +2,8 @@
 
 ## Active
 
+- 2026-08-11: alpha.13 is the recommended Community Preview for external testers but remains a prerelease. Community presentation must pair real application media and direct download with partial-compatibility, unsigned Windows, SmartScreen, DRM, and physical-device limitations.
+
 - 2026-08-11: live hierarchy accepts only serialized `_children_`/recognized child collections and rejects ancestry cycles. `focusedChild` and ordinary node-valued fields are references, not structural parentage. Bounds are computed from emitted dimensions and ancestor translations or shown as unavailable.
 - Alpha.13 passed formatting, lint, typecheck, 23 Vitest tests, audit, all builds, Windows packaging, and 5 sequential Electron E2E tests. Portable size: 107,898,990 bytes; SHA-256: `D21E50F531C56B9867169B51941E8B4A6208AE1BF7CDBEB11729467C5CEF69FC`; Authenticode: `NotSigned`.
 
