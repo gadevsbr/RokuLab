@@ -2,11 +2,17 @@ import Editor, { type BeforeMount } from '@monaco-editor/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { collectFocusTargets, nextFocusTarget, type FocusDirection } from '@rokulab/scenegraph';
 import type {
+  ConsoleEntry,
   ProjectEntry,
   ProjectFileContent,
   ProjectSnapshot,
   SceneNodeData,
 } from '@rokulab/shared';
+import {
+  sendCompatibilityKey,
+  startCompatibilityEngine,
+  stopCompatibilityEngine,
+} from './compatibility-engine';
 
 const sourcePattern = /(^manifest$|\.(brs|xml|json|txt)$)/i;
 
@@ -167,6 +173,8 @@ export function App() {
   const [draft, setDraft] = useState('');
   const [dirty, setDirty] = useState(false);
   const [focusedNode, setFocusedNode] = useState<string>();
+  const [engineActive, setEngineActive] = useState(false);
+  const [engineConsole, setEngineConsole] = useState<ConsoleEntry[]>([]);
   const projectRoot = project?.rootPath;
   const focusTargets = useMemo(
     () => (project?.scene ? collectFocusTargets(project.scene) : []),
@@ -219,10 +227,70 @@ export function App() {
   }, [draft, dirty, file]);
 
   const move = useCallback(
-    (direction: FocusDirection) =>
-      setFocusedNode((current) => nextFocusTarget(focusTargets, current, direction)),
-    [focusTargets],
+    (direction: FocusDirection) => {
+      if (engineActive) void sendCompatibilityKey(direction);
+      else setFocusedNode((current) => nextFocusTarget(focusTargets, current, direction));
+    },
+    [engineActive, focusTargets],
   );
+
+  const runEngine = useCallback(async () => {
+    if (!project || !window.rokulab) return;
+    try {
+      setError('');
+      setEngineConsole([]);
+      setEngineActive(true);
+      setWorkspaceTab('Preview');
+      const archive = await window.rokulab.archiveProject();
+      const version = await startCompatibilityEngine(
+        archive,
+        project.manifest.title ?? 'RokuLab-channel',
+        (event, data) => {
+          if (event === 'debug') {
+            const detail = (data ?? {}) as { level?: string; content?: unknown };
+            const level: ConsoleEntry['level'] =
+              detail.level === 'error' || detail.level === 'warn' || detail.level === 'debug'
+                ? detail.level
+                : 'info';
+            setEngineConsole((entries) => [
+              ...entries.slice(-499),
+              {
+                timestamp: new Date().toISOString(),
+                level,
+                source: 'brs-engine',
+                message: String(detail.content ?? ''),
+              },
+            ]);
+          } else if (event === 'error') {
+            setError(typeof data === 'string' ? data : JSON.stringify(data));
+          } else if (event === 'end') {
+            setEngineActive(false);
+            setStatus('Compatibility engine stopped');
+          } else if (!['audio', 'video', 'display', 'stats'].includes(event)) {
+            setEngineConsole((entries) => [
+              ...entries.slice(-499),
+              {
+                timestamp: new Date().toISOString(),
+                level: 'debug',
+                source: 'brs-engine',
+                message: `${event}${data === undefined ? '' : `: ${typeof data === 'string' ? data : JSON.stringify(data)}`}`,
+              },
+            ]);
+          }
+        },
+      );
+      setStatus(`Compatibility engine ${version} running`);
+    } catch (reason) {
+      setEngineActive(false);
+      setError(reason instanceof Error ? reason.message : String(reason));
+    }
+  }, [project]);
+
+  const stopEngine = useCallback(async () => {
+    await stopCompatibilityEngine();
+    setEngineActive(false);
+    setStatus('Compatibility engine stopped');
+  }, []);
 
   useEffect(() => {
     if (!focusTargets.some(({ id }) => id === focusedNode)) setFocusedNode(focusTargets[0]?.id);
@@ -261,10 +329,12 @@ export function App() {
       if (event.key === 'ArrowRight') move('right');
       if (event.key === 'ArrowUp') move('up');
       if (event.key === 'ArrowLeft') move('left');
+      if (engineActive && event.key === 'Enter') void sendCompatibilityKey('select');
+      if (engineActive && event.key === 'Escape') void sendCompatibilityKey('back');
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  }, [move, workspaceTab]);
+  }, [engineActive, move, workspaceTab]);
 
   if (!project)
     return (
@@ -297,7 +367,12 @@ export function App() {
           </em>
         </span>
         <nav>
-          <button title="Run">Run</button>
+          <button title="Run" onClick={() => void runEngine()}>
+            Run
+          </button>
+          <button title="Stop" disabled={!engineActive} onClick={() => void stopEngine()}>
+            Stop
+          </button>
           <button
             title="Reload"
             onClick={() => void window.rokulab?.openPath(project.rootPath).then(setProject)}
@@ -345,17 +420,41 @@ export function App() {
             </div>
             <div className="tv">
               <div className="screen">
-                {project.scene && <RenderNode node={project.scene} focused={focusedNode} />}
+                <canvas id="display" width="1920" height="1080" hidden={!engineActive} />
+                <video id="player" hidden />
+                <div id="stats" hidden />
+                {!engineActive && project.scene && (
+                  <RenderNode node={project.scene} focused={focusedNode} />
+                )}
               </div>
             </div>
             <div className="remote">
+              <button onClick={() => engineActive && void sendCompatibilityKey('back')}>
+                Back
+              </button>
               <button onClick={() => move('up')}>Up</button>
               <div>
                 <button onClick={() => move('left')}>Left</button>
-                <button className="ok">OK</button>
+                <button
+                  className="ok"
+                  onClick={() => engineActive && void sendCompatibilityKey('select')}
+                >
+                  OK
+                </button>
                 <button onClick={() => move('right')}>Right</button>
               </div>
               <button onClick={() => move('down')}>Down</button>
+              <div>
+                <button onClick={() => engineActive && void sendCompatibilityKey('rev')}>
+                  Rev
+                </button>
+                <button onClick={() => engineActive && void sendCompatibilityKey('play')}>
+                  Play
+                </button>
+                <button onClick={() => engineActive && void sendCompatibilityKey('fwd')}>
+                  Fwd
+                </button>
+              </div>
               <small>Arrow keys | Enter | Escape</small>
             </div>
           </>
@@ -440,7 +539,7 @@ export function App() {
             className={bottomTab === 'Console' ? 'active' : ''}
             onClick={() => setBottomTab('Console')}
           >
-            Console <b>{project.console.length}</b>
+            Console <b>{project.console.length + engineConsole.length}</b>
           </button>
           <button
             className={bottomTab === 'Problems' ? 'active' : ''}
@@ -454,9 +553,10 @@ export function App() {
         <div className="output">
           {error && <p className="error">ERROR {error}</p>}
           {bottomTab === 'Console'
-            ? project.console.map((entry, index) => (
+            ? [...project.console, ...engineConsole].map((entry, index) => (
                 <p key={index}>
-                  <time>{entry.timestamp.slice(11, 19)}</time> <mark>INFO</mark>{' '}
+                  <time>{entry.timestamp.slice(11, 19)}</time>{' '}
+                  <mark>{entry.level.toUpperCase()}</mark>{' '}
                   <code>
                     {entry.source}:{entry.line}
                   </code>{' '}

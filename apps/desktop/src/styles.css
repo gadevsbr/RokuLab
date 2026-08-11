@@ -254,6 +254,16 @@ button {
   background: #101a2d;
   transform-origin: top left;
 }
+.screen #display {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.screen #display[hidden] {
+  display: none;
+}
 .sg {
   position: relative;
 }

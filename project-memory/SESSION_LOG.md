@@ -1,5 +1,13 @@
 # Session log
 
+## 2026-08-11
+
+- Integrated `brs-engine` 2.3.0 and `brs-scenegraph` 0.3.0 behind a RokuLab adapter, with secure project ZIP creation, cross-origin-isolated Electron hosting, 1080p canvas output, console forwarding, Run/Stop, and remote/media input.
+- Converted the bundled example into a valid `roSGScreen` channel. An Electron E2E now verifies a nontransparent rendered canvas frame rather than relying only on status text.
+- Added an archive containment/size boundary and an integration test that inspects the generated manifest and component entries.
+- Kept roadmap 0.2 open: live-engine Inspector diagnostics/editing, safe hot reload, and the recorded IEDB navigation-shell flow remain required exit evidence.
+- Alpha.7 passed formatting, lint, typecheck, 18 Vitest tests, all workspace builds, audit, 3 Playwright tests including packaged runtime execution, and IEDB validation (`OK`, 6 grouped warnings). Portable size: 107,902,383 bytes; SHA-256: `4B4E73AAEFE8B9FCC27E63BDCBA2884F2DFC94F37D7F22545D969ED47EBBCFB3`; Authenticode: `NotSigned`.
+
 ## 2026-08-10
 
 - Added controlled BrightScript `if/else`, runtime state, reactive alias field writes, observer callback dispatch, event inspection, and same-field cycle protection.

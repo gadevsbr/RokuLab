@@ -1,4 +1,13 @@
 sub Main()
   print "RokuLab sample entry point"
-end sub
+  screen = CreateObject("roSGScreen")
+  port = CreateObject("roMessagePort")
+  screen.SetMessagePort(port)
+  scene = screen.CreateScene("MainScene")
+  screen.Show()
 
+  while true
+    message = wait(0, port)
+    if type(message) = "roSGScreenEvent" and message.isScreenClosed() then return
+  end while
+end sub

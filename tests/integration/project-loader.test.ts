@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import path from 'node:path';
 import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { loadProject, readProjectFile, writeProjectFile } from '@rokulab/project-loader';
+import {
+  archiveProject,
+  loadProject,
+  readProjectFile,
+  writeProjectFile,
+} from '@rokulab/project-loader';
+import { unzipSync, strFromU8 } from 'fflate';
 
 describe('hello-world fixture', () => {
   it('loads a runnable project snapshot', async () => {
@@ -50,6 +56,12 @@ describe('hello-world fixture', () => {
     expect(opened.language).toBe('brightscript');
     await writeProjectFile(root, 'source/main.brs', 'sub Main()\n print "saved"\nend sub');
     expect((await readProjectFile(root, 'source/main.brs')).content).toContain('saved');
+  });
+  it('creates a project-scoped channel archive', async () => {
+    const archive = unzipSync(await archiveProject(path.resolve('examples/hello-world')));
+    expect(strFromU8(archive.manifest!)).toContain('title=RokuLab Hello World');
+    expect(Object.keys(archive)).toContain('components/MainScene.xml');
+    expect(Object.keys(archive).some((entry) => entry.startsWith('project-memory/'))).toBe(false);
   });
   it('blocks hidden areas, traversal, unsupported writes, and oversized content', async () => {
     const root = await mkdtemp(path.join(tmpdir(), 'rokulab-safe-edit-'));

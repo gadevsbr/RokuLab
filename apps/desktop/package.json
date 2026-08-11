@@ -1,6 +1,6 @@
 {
   "name": "@rokulab/desktop",
-  "version": "0.1.0-alpha.6",
+  "version": "0.1.0-alpha.7",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
@@ -16,10 +16,16 @@
     "@rokulab/project-loader": "workspace:*",
     "@rokulab/scenegraph": "workspace:*",
     "@rokulab/shared": "workspace:*",
+    "@zenfs/core": "2.5.0",
+    "brs-engine": "2.3.0",
+    "brs-scenegraph": "^0.3.0",
     "chokidar": "5.0.0",
+    "kerium": "1.3.4",
+    "memium": "0.3.10",
     "monaco-editor": "0.56.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
+    "utilium": "2.5.0",
     "zustand": "5.0.8"
   },
   "devDependencies": {

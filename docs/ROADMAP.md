@@ -41,24 +41,25 @@ Already delivered:
 - controlled `if/else`, runtime state, observer dispatch, and same-field cycle protection;
 - selected-node properties and observer bindings in the Inspector;
 - geometric directional focus using nested translations and visibility.
+- a compatibility-engine adapter based on MIT-licensed `brs-engine` 2.3.0 and
+  `brs-scenegraph` 0.3.0, isolated from the Electron filesystem boundary;
+- real channel ZIP packaging, multi-file loading, full BrightScript expressions,
+  collections, control flow, calls/returns, Roku objects, and runtime diagnostics;
+- full SceneGraph component/node execution through the adapter, including inheritance,
+  interfaces, observers, dynamic nodes, content, focus, and key dispatch;
+- 1080p canvas output, Run/Stop controls, remote/media keys, and engine console events;
+- a pixel-backed Electron test proving that a valid SceneGraph channel draws a frame.
 
-Remaining runtime work:
+Remaining integration work before 0.2 can close:
 
-- evaluate expressions, variables, arrays, associative arrays, operators, and function return values;
-- implement `if/else`, loops, argument passing, recursion limits, runtime errors, and stack traces;
-- load and link multiple BrightScript files without executing branches speculatively;
-- evaluate or integrate a mature permissively licensed BrightScript runtime adapter;
-- intercept Roku object creation through a stable compatibility API boundary.
-
-Remaining SceneGraph work:
-
-- component inheritance, `<interface>` fields, aliases, `onChange`, default values, and field types;
-- reactive property writes that update the renderer immediately;
-- complete `observeField` edge cases, `unobserveField`, callback arguments, and cross-field loop protection;
-- dynamic node creation/removal, `appendChild`, `removeChild`, and `ContentNode` trees;
-- `setFocus`, `hasFocus`, `isInFocusChain`, `focusedChild`, and component `initialFocus`;
-- `onKeyEvent` dispatch for Up, Down, Left, Right, OK, Back, Replay, Options, and media keys;
-- Inspector editing with validation, transient overrides, event history, layout bounds, and focus-chain visibility.
+- expose the compatibility engine's live node tree, field values, focus chain, observer calls,
+  source stack, and layout bounds through a versioned diagnostic adapter;
+- add validated Inspector field editing and transient overrides against the live engine;
+- restart the engine safely on source changes, with explicit state-loss behavior;
+- run the IEDB navigation-shell reference flow and record initialization, route changes,
+  observer cardinality, Back behavior, and focus restoration evidence;
+- classify unsupported engine behavior explicitly instead of falling back silently to the
+  legacy preview; the legacy parser remains a pre-run inspection surface only.
 
 Exit criteria:
 

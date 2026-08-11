@@ -1,6 +1,6 @@
 # Current state
 
-Phase: `0.1.0-alpha.6` reactive-observer milestone locally validated.
+Phase: `0.1.0-alpha.7` compatibility-engine milestone locally validated; publication pending.
 
 Published on 2026-08-10: prerelease `v0.1.0-alpha.6` contains the validated Windows x64 artifact and `main` is synchronized.
 
@@ -36,4 +36,6 @@ Evidence for alpha.6: controlled `if/else` execution, runtime `m.*` state, alias
 
 The alpha.6 full gate passed: formatting, lint, typecheck, 17 Vitest tests, 3 Playwright tests plus a post-package smoke, all 7 workspace builds, dependency audit, IEDB validation, and Windows packaging. Portable artifact: 98,014,404 bytes; SHA-256 `4FFC68A1C7DA566AC551D28BDF445F969F92981CEE38DA9EB52BEE811C38EFE9`; Authenticode status `NotSigned`.
 
-Not implemented: BrightScript loops/general expressions, complete observer semantics, partial reload, network/player/debugger, signed installers, macOS/Linux artifacts, and physical Roku integration. Final behavior on Roku hardware is not validated. The Windows artifact is portable but not certificate-signed. Monaco's current main bundle is 2.83 MB before gzip and should be split in a future performance cycle.
+The new Run path executes full BrightScript and SceneGraph through `brs-engine` 2.3.0 and `brs-scenegraph` 0.3.0. Project ZIP creation and a nontransparent 1080p canvas frame are covered by integration/Electron evidence. The live engine is not yet connected to Inspector editing/diagnostics, hot reload still requires an explicit rerun, and the IEDB navigation reference flow remains unrecorded; therefore roadmap 0.2 is still open. Final Roku-hardware behavior is not validated, and Windows artifacts remain unsigned.
+
+Alpha.7 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, 3 Playwright tests, direct IEDB validation, Windows packaging, and a packaged-app runtime smoke passed. Portable artifact: 107,902,383 bytes; SHA-256 `4B4E73AAEFE8B9FCC27E63BDCBA2884F2DFC94F37D7F22545D969ED47EBBCFB3`; Authenticode status `NotSigned`.

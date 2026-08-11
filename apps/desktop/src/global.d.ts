@@ -7,6 +7,7 @@ declare global {
       openExample(): Promise<ProjectSnapshot>;
       readFile(relative: string): Promise<ProjectFileContent>;
       writeFile(relative: string, content: string): Promise<ProjectFileContent>;
+      archiveProject(): Promise<Uint8Array>;
       onProjectChanged(listener: (change: ProjectChange) => void): () => void;
       onWatchError(listener: (message: string) => void): () => void;
     };

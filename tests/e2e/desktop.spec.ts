@@ -37,6 +37,27 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     await expect(window.getByText('RokuLab Hello World').first()).toBeVisible();
     await expect(window.getByText('Hello from RokuLab')).toBeVisible();
     await expect(window.getByText('Hello from BrightScript')).toBeVisible();
+    await window.getByRole('button', { name: 'Run', exact: true }).click();
+    await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(window.locator('#display')).toBeVisible();
+    await expect(window.getByRole('button', { name: 'Stop', exact: true })).toBeEnabled();
+    await expect
+      .poll(
+        () =>
+          window.locator('#display').evaluate((canvas: HTMLCanvasElement) => {
+            const pixels = canvas.getContext('2d')?.getImageData(0, 0, 1920, 1080).data;
+            if (!pixels) return false;
+            for (let index = 3; index < pixels.length; index += 4)
+              if (pixels[index] !== 0) return true;
+            return false;
+          }),
+        { timeout: 15_000 },
+      )
+      .toBe(true);
+    await window.getByRole('button', { name: 'Stop', exact: true }).click();
+    await expect(window.locator('#display')).toBeHidden();
     await window.getByRole('button', { name: 'Label #title' }).click();
     await expect(window.getByRole('heading', { name: 'PROPERTIES #title' })).toBeVisible();
     await expect(window.getByTitle('Hello from RokuLab')).toBeVisible();
@@ -67,6 +88,11 @@ test('packaged Windows app opens its bundled example', async () => {
     await window.getByRole('button', { name: 'Open bundled Hello World' }).click();
     await expect(window.getByText('Hello from RokuLab')).toBeVisible();
     await expect(window.getByText('Hello from BrightScript')).toBeVisible();
+    await window.getByRole('button', { name: 'Run', exact: true }).click();
+    await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(window.locator('#display')).toBeVisible();
   } finally {
     await stopTestApplication(app);
   }

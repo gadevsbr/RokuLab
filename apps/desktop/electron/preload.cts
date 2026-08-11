@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('rokulab', {
   readFile: (relative: string) => ipcRenderer.invoke('project:readFile', relative),
   writeFile: (relative: string, content: string) =>
     ipcRenderer.invoke('project:writeFile', relative, content),
+  archiveProject: async () => new Uint8Array(await ipcRenderer.invoke('project:archive')),
   onProjectChanged: (listener: (change: unknown) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, change: unknown) => listener(change);
     ipcRenderer.on('project:changed', handler);

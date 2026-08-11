@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.0-alpha.7 - 2026-08-11
+
+- Integrate the MIT-licensed BrightScript 15.3-aligned compatibility engine and SceneGraph extension.
+- Execute securely archived multi-file channels on a real 1080p canvas with Run/Stop and remote controls.
+- Forward engine console/diagnostic events and host workers through an isolated Electron protocol.
+- Verify ZIP contents and a nontransparent SceneGraph frame through automated integration/Electron tests.
+
 ## 0.1.0-alpha.6 - 2026-08-10
 
 - Evaluate a controlled BrightScript `if/else` subset with literal, variable, field, and comparison expressions.

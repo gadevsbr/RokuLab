@@ -1,5 +1,6 @@
 import { lstat, readFile, readdir, realpath, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { zipSync } from 'fflate';
 import { runInit } from '@rokulab/brightscript-runtime';
 import { parseManifest } from '@rokulab/manifest-parser';
 import { parseComponentDescriptor, parseSceneGraph } from '@rokulab/scenegraph';
@@ -8,6 +9,7 @@ import type { ProjectEntry, ProjectFileContent, ProjectSnapshot } from '@rokulab
 const allowedRoots = new Set(['source', 'components', 'images', 'fonts', 'locale']);
 const editableExtensions = new Set(['.brs', '.xml', '.json', '.txt']);
 const maximumSourceBytes = 1024 * 1024;
+const maximumArchiveBytes = 128 * 1024 * 1024;
 
 function within(root: string, relative: string): string {
   const resolved = path.resolve(root, relative);
@@ -71,6 +73,26 @@ export async function writeProjectFile(
   const file = await safeExistingFile(root, relative);
   await writeFile(file, content, 'utf8');
   return { path: relative.replaceAll('\\', '/'), content, language: languageFor(relative) };
+}
+
+export async function archiveProject(rootInput: string): Promise<Uint8Array> {
+  const root = await realpath(path.resolve(rootInput));
+  const files = findAll(await tree(root), '');
+  const archive: Record<string, Uint8Array> = {};
+  let total = 0;
+  for (const relative of files) {
+    assertProjectFile(relative);
+    const candidate = within(root, relative);
+    if ((await lstat(candidate)).isSymbolicLink()) continue;
+    const resolved = await realpath(candidate);
+    within(root, path.relative(root, resolved));
+    const details = await stat(resolved);
+    if (!details.isFile()) continue;
+    total += details.size;
+    if (total > maximumArchiveBytes) throw new Error('Project archive is limited to 128 MiB');
+    archive[relative] = new Uint8Array(await readFile(resolved));
+  }
+  return zipSync(archive, { level: 6 });
 }
 
 async function tree(root: string, current = ''): Promise<ProjectEntry[]> {

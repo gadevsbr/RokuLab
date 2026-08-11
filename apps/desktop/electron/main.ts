@@ -1,13 +1,26 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, protocol, session } from 'electron';
 import { type FSWatcher, watch } from 'chokidar';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadProject, readProjectFile, writeProjectFile } from '@rokulab/project-loader';
+import {
+  archiveProject,
+  loadProject,
+  readProjectFile,
+  writeProjectFile,
+} from '@rokulab/project-loader';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const watchers = new Map<number, FSWatcher>();
 const roots = new Map<number, string>();
 const reloadTimers = new Map<number, NodeJS.Timeout>();
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'rokulab',
+    privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true },
+  },
+]);
 
 async function watchProject(window: BrowserWindow, rootPath: string): Promise<void> {
   await watchers.get(window.webContents.id)?.close();
@@ -69,13 +82,12 @@ function createWindow() {
   });
   window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   window.webContents.on('will-navigate', (event, url) => {
-    const allowed =
-      process.env.VITE_DEV_SERVER_URL ?? `file://${path.join(directory, '../dist/index.html')}`;
+    const allowed = process.env.VITE_DEV_SERVER_URL ?? 'rokulab://app/';
     if (!url.startsWith(allowed)) event.preventDefault();
   });
   const devUrl = process.env.VITE_DEV_SERVER_URL;
   if (devUrl) void window.loadURL(devUrl);
-  else void window.loadFile(path.join(directory, '../dist/index.html'));
+  else void window.loadURL('rokulab://app/index.html');
 }
 
 ipcMain.handle('project:choose', async (event) => {
@@ -111,8 +123,50 @@ ipcMain.handle('project:writeFile', (event, relative: unknown, content: unknown)
     throw new Error('No active project or invalid file update');
   return writeProjectFile(root, relative, content);
 });
+ipcMain.handle('project:archive', (event) => {
+  const root = roots.get(event.sender.id);
+  if (!root) throw new Error('No active project');
+  return archiveProject(root).then((archive) =>
+    archive.buffer.slice(archive.byteOffset, archive.byteOffset + archive.byteLength),
+  );
+});
 
 app.whenReady().then(() => {
+  protocol.handle('rokulab', async (request) => {
+    const root = path.resolve(directory, '../dist');
+    const relative = decodeURIComponent(new URL(request.url).pathname).replace(/^[/\\]+/, '');
+    const target = path.resolve(root, relative || 'index.html');
+    if (target !== root && !target.startsWith(`${root}${path.sep}`))
+      return new Response('Not found', { status: 404 });
+    try {
+      const file = await readFile(target);
+      const body = Uint8Array.from(file).buffer;
+      const contentTypes: Record<string, string> = {
+        '.css': 'text/css',
+        '.html': 'text/html',
+        '.js': 'text/javascript',
+        '.json': 'application/json',
+        '.txt': 'text/plain',
+        '.zip': 'application/zip',
+      };
+      return new Response(body, {
+        headers: {
+          'Content-Type': contentTypes[path.extname(target)] ?? 'application/octet-stream',
+        },
+      });
+    } catch {
+      return new Response('Not found', { status: 404 });
+    }
+  });
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) =>
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Cross-Origin-Embedder-Policy': ['require-corp'],
+        'Cross-Origin-Opener-Policy': ['same-origin'],
+      },
+    }),
+  );
   createWindow();
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
