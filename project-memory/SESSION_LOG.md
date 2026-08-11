@@ -12,6 +12,7 @@
 - Added an IEDB E2E flow covering initialization, runtime field traffic, visual navigation transitions, detail/Back restoration, and continued execution.
 - Added a SceneGraph observer fixture proving one field update calls its observer exactly once.
 - Alpha.8 passed formatting, lint, typecheck, 18 Vitest tests, all workspace builds, audit, 4 Playwright tests including IEDB and packaged execution, and direct IEDB validation (`OK`, 6 grouped warnings). Portable size: 107,904,534 bytes; SHA-256: `D078A23F4D68D08BBD9F16305C0DBFAB54494D50FC3F0F1429153CEE71EAA060`; Authenticode: `NotSigned`.
+- Published prerelease `v0.1.0-alpha.8` with the validated Windows artifact and synchronized `main`.
 
 ## 2026-08-10
 
