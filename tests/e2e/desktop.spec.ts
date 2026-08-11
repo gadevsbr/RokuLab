@@ -50,16 +50,19 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     await expect(window.getByText('Hello from RokuLab')).toBeVisible();
     await expect(window.getByText('Hello from BrightScript')).toBeVisible();
     await expect(window.getByRole('heading', { name: 'RUNNING TV' })).toBeVisible();
-    const [explorer, editor, device] = await Promise.all([
+    const [explorer, workspace, preview, remote] = await Promise.all([
       window.locator('.explorer').boundingBox(),
       window.locator('.display').boundingBox(),
-      window.locator('.device-panel').boundingBox(),
+      window.locator('.preview-device').boundingBox(),
+      window.locator('.remote-panel').boundingBox(),
     ]);
     expect(explorer).not.toBeNull();
-    expect(editor).not.toBeNull();
-    expect(device).not.toBeNull();
-    expect(explorer!.x).toBeLessThan(editor!.x);
-    expect(editor!.x).toBeLessThan(device!.x);
+    expect(workspace).not.toBeNull();
+    expect(preview).not.toBeNull();
+    expect(remote).not.toBeNull();
+    expect(explorer!.x).toBeLessThan(workspace!.x);
+    expect(preview!.x).toBeLessThan(remote!.x);
+    expect(preview!.width).toBeGreaterThan(remote!.width);
     await window.getByRole('button', { name: 'Run', exact: true }).click();
     await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
       timeout: 15_000,
@@ -102,6 +105,11 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     await window.getByRole('button', { name: '. MainScene.brs' }).click();
     await expect(window.getByRole('button', { name: 'components/MainScene.brs' })).toBeVisible();
     await expect(window.locator('.monaco-editor')).toBeVisible();
+    await expect(window.locator('.remote-panel')).toHaveCount(0);
+    const editor = await window.locator('.editor-shell').boundingBox();
+    expect(editor).not.toBeNull();
+    expect(editor!.x).toBe(workspace!.x);
+    expect(Math.abs(editor!.width - workspace!.width)).toBeLessThanOrEqual(1);
   } finally {
     await writeFile(scriptPath, originalScript);
     await stopTestApplication(app);

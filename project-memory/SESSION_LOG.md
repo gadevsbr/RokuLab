@@ -56,3 +56,6 @@
 - Reworked the desktop shell into an Android-Studio-inspired TV IDE with a persistent Running TV tool window, central editor, Project explorer, Inspector, console, tool rail, status bar, and compact accessible controls.
 - Added E2E layout evidence that Project, editor, and Running TV occupy ordered left/center/right regions; 18 Vitest tests and all 5 Electron flows pass after the redesign.
 - Generated the unsigned alpha.10 Windows portable (107,897,310 bytes, SHA-256 `AFE7E7D7B5ACA4B128413194679714495A34CB2A427EE47552D2C1B87186A8CE`) and validated the packaged app.
+- Replaced the persistent narrow Running TV column with a shared mode-dependent workspace: wide TV plus remote in Preview, full-width Monaco in Editor.
+- Extended E2E geometry coverage to prove the preview is wider than the remote column and the editor later consumes the complete workspace width within the 1 px border tolerance.
+- Generated and validated the unsigned alpha.11 Windows portable (107,899,203 bytes, SHA-256 `88F936F98F6F51CE20AEC122FFAD49F2CAE5EEDEC7E423D722016D2FB28AC789`).

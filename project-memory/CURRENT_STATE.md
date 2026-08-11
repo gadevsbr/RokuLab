@@ -1,6 +1,10 @@
 # Current state
 
-Phase: `0.1.0-alpha.10` Android-Studio-inspired TV workbench validation and publication.
+Phase: `0.1.0-alpha.11` shared preview/editor workspace validation and publication.
+
+Alpha.11 makes the full upper workspace mode-dependent: Preview uses the available width for a large 16:9 TV plus a dedicated right-side remote column, while Editor removes both preview and remote and gives Monaco the entire same region. Project, console, and Inspector keep stable positions.
+
+Alpha.11 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, sequential execution of all 5 Playwright Electron tests, Windows packaging, IEDB navigation, packaged execution, and graceful shutdown passed. The geometry test verifies that the TV region is wider than the remote column and that Monaco later consumes the complete workspace width. Portable artifact: 107,899,203 bytes; SHA-256 `88F936F98F6F51CE20AEC122FFAD49F2CAE5EEDEC7E423D722016D2FB28AC789`; Authenticode status `NotSigned`.
 
 Alpha.10 separates IDE responsibilities into a compact toolbar, tool rail, Project explorer, central Preview/Monaco editor, persistent Running TV panel, Inspector, console, and status bar. The runtime and TV controls remain continuously available while source files are edited; accessible control names preserve keyboard/test automation.
 

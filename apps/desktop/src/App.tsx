@@ -519,29 +519,72 @@ export function App() {
           )}
         </div>
         {workspaceTab === 'Preview' ? (
-          <div className="scene-overview">
-            <div className="scene-overview-icon">◇</div>
-            <h1>Scene Preview</h1>
-            <p>
-              The channel is rendered continuously in the <b>Running TV</b> tool window.
-            </p>
-            <div className="scene-summary">
-              <span>
-                <b>{engineActive ? 'Running' : 'Stopped'}</b> runtime
-              </span>
-              <span>
-                <b>1920 × 1080</b> canvas
-              </span>
-              <span>
-                <b>{project.observers.length}</b> observers
-              </span>
-              <span>
-                <b>{project.events.length}</b> events
-              </span>
-            </div>
-            <button className="open-entry" onClick={() => void openFile('source/main.brs')}>
-              Open source/main.brs
-            </button>
+          <div className="preview-workspace">
+            <section className="preview-device">
+              <div className="preview-toolbar">
+                <h2>RUNNING TV</h2>
+                <span>Roku TV · 1080p</span>
+                <span className={engineActive ? 'device-status running' : 'device-status'}>
+                  {engineActive ? '● Running' : '○ Stopped'}
+                </span>
+                <span>100%</span>
+              </div>
+              <div className="tv-stage">
+                <div className="tv">
+                  <div className="screen">
+                    <canvas id="display" width="1920" height="1080" hidden={!engineActive} />
+                    <video id="player" hidden />
+                    <div id="stats" hidden />
+                    {!engineActive && project.scene && (
+                      <RenderNode node={project.scene} focused={focusedNode} />
+                    )}
+                  </div>
+                </div>
+                <div className="tv-stand" />
+              </div>
+            </section>
+            <aside className="remote-panel">
+              <div className="panel-title">
+                <h2>REMOTE</h2>
+                <span>{lastEngineInput || 'Ready'}</span>
+              </div>
+              <div className="remote">
+                <button aria-label="Back" onClick={() => engineActive && sendEngineInput('back')}>
+                  ↩
+                </button>
+                <button aria-label="Up" onClick={() => move('up')}>
+                  ↑
+                </button>
+                <div>
+                  <button aria-label="Left" onClick={() => move('left')}>
+                    ←
+                  </button>
+                  <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
+                    OK
+                  </button>
+                  <button aria-label="Right" onClick={() => move('right')}>
+                    →
+                  </button>
+                </div>
+                <button aria-label="Down" onClick={() => move('down')}>
+                  ↓
+                </button>
+                <div className="media-keys">
+                  <button onClick={() => engineActive && sendEngineInput('rev')}>◀◀</button>
+                  <button onClick={() => engineActive && sendEngineInput('play')}>▶Ⅱ</button>
+                  <button onClick={() => engineActive && sendEngineInput('fwd')}>▶▶</button>
+                </div>
+                <small>Keyboard: arrows · Enter · Escape</small>
+              </div>
+              <dl className="remote-runtime">
+                <dt>Canvas</dt>
+                <dd>1920 × 1080</dd>
+                <dt>Observers</dt>
+                <dd>{project.observers.length}</dd>
+                <dt>Events</dt>
+                <dd>{project.events.length}</dd>
+              </dl>
+            </aside>
           </div>
         ) : file ? (
           <div className="editor-shell">
@@ -566,60 +609,6 @@ export function App() {
           </div>
         ) : null}
       </section>
-      <aside className="device-panel">
-        <div className="panel-title">
-          <h2>RUNNING TV</h2>
-          <span className={engineActive ? 'device-status running' : 'device-status'}>
-            {engineActive ? '● Running' : '○ Stopped'}
-          </span>
-          <button title="Device options">⋮</button>
-        </div>
-        <div className="device-toolbar">
-          <span>Roku TV · 1080p</span>
-          <span>100%</span>
-        </div>
-        <div className="tv-stage">
-          <div className="tv">
-            <div className="screen">
-              <canvas id="display" width="1920" height="1080" hidden={!engineActive} />
-              <video id="player" hidden />
-              <div id="stats" hidden />
-              {!engineActive && project.scene && (
-                <RenderNode node={project.scene} focused={focusedNode} />
-              )}
-            </div>
-          </div>
-          <div className="tv-stand" />
-        </div>
-        <div className="remote">
-          <button aria-label="Back" onClick={() => engineActive && sendEngineInput('back')}>
-            ↩
-          </button>
-          <button aria-label="Up" onClick={() => move('up')}>
-            ↑
-          </button>
-          <div>
-            <button aria-label="Left" onClick={() => move('left')}>
-              ←
-            </button>
-            <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
-              OK
-            </button>
-            <button aria-label="Right" onClick={() => move('right')}>
-              →
-            </button>
-          </div>
-          <button aria-label="Down" onClick={() => move('down')}>
-            ↓
-          </button>
-          <div className="media-keys">
-            <button onClick={() => engineActive && sendEngineInput('rev')}>◀◀</button>
-            <button onClick={() => engineActive && sendEngineInput('play')}>▶Ⅱ</button>
-            <button onClick={() => engineActive && sendEngineInput('fwd')}>▶▶</button>
-          </div>
-          <small>Keyboard: arrows · Enter · Escape</small>
-        </div>
-      </aside>
       <aside className="inspector">
         <div className="panel-title">
           <h2>INSPECTOR</h2>

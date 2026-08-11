@@ -2,7 +2,9 @@
 
 ## Active
 
-- 2026-08-11: the workbench uses an Android-Studio-inspired tool-window layout adapted to TV development: project tree left, editor center, persistent 16:9 Running TV right, Inspector/console below, and compact icon controls with accessible names. The prior center-preview-plus-floating-remote composition is superseded because it hid the TV while editing and mixed editor/device responsibilities.
+- Superseded on 2026-08-11: alpha.10 used an Android-Studio-inspired layout with a persistent Running TV beside the editor. Alpha.11 replaces it because the device panel unnecessarily reduced editing width.
+- 2026-08-11: Preview and Editor share the entire upper workspace. Preview divides it into a large 16:9 TV and dedicated right-side remote column; Editor unmounts both and occupies the full region. Project, console, and Inspector remain stable.
+- Alpha.11 passed formatting, lint, typecheck, 18 Vitest tests, all builds, and 5 sequential Electron E2E tests. Portable size: 107,899,203 bytes; SHA-256: `88F936F98F6F51CE20AEC122FFAD49F2CAE5EEDEC7E423D722016D2FB28AC789`; Authenticode: `NotSigned`.
 - Alpha.10 passed formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, and 5 Playwright tests including layout geometry, IEDB, packaged execution, and graceful shutdown. Portable size: 107,897,310 bytes; SHA-256: `AFE7E7D7B5ACA4B128413194679714495A34CB2A427EE47552D2C1B87186A8CE`; Authenticode: `NotSigned`.
 
 - 2026-08-09: pnpm workspace without Turborepo; orchestration needs are currently simple.
