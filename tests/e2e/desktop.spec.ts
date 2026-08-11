@@ -97,12 +97,46 @@ test('desktop opens the bundled project and renders the vertical slice', async (
   }
 });
 
+test('desktop closes cleanly with an active project watcher', async () => {
+  const scriptPath = path.resolve('examples/hello-world/components/MainScene.brs');
+  const originalScript = await readFile(scriptPath, 'utf8');
+  const environment = { ...process.env };
+  delete environment.ELECTRON_RUN_AS_NODE;
+  const app = await electron.launch({
+    executablePath: path.resolve(
+      'node_modules/.pnpm/electron@43.3.0/node_modules/electron/dist/electron.exe',
+    ),
+    args: [path.resolve('apps/desktop')],
+    env: environment,
+  });
+  let closed = false;
+  try {
+    const window = await app.firstWindow();
+    await window.getByRole('button', { name: 'Open bundled Hello World' }).click();
+    await expect(window.getByText('Hello from RokuLab')).toBeVisible();
+    await writeFile(scriptPath, `${originalScript}\n' trigger pending watcher cleanup\n`);
+    const closeEvent = new Promise<void>((resolve) => app.once('close', resolve));
+    void app.close();
+    await Promise.race([
+      closeEvent,
+      new Promise<never>((_resolve, reject) =>
+        setTimeout(() => reject(new Error('Electron did not close cleanly')), 10_000),
+      ),
+    ]);
+    closed = true;
+  } finally {
+    await writeFile(scriptPath, originalScript);
+    if (!closed) await stopTestApplication(app);
+  }
+});
+
 test('packaged Windows app opens its bundled example', async () => {
   test.skip(process.platform !== 'win32', 'Windows package smoke runs on Windows only');
   const executable = path.resolve('apps/desktop/release/win-unpacked/RokuLab.exe');
   const environment = { ...process.env };
   delete environment.ELECTRON_RUN_AS_NODE;
   const app = await electron.launch({ executablePath: executable, env: environment });
+  let closed = false;
   try {
     const window = await app.firstWindow();
     await window.getByRole('button', { name: 'Open bundled Hello World' }).click();
@@ -113,8 +147,12 @@ test('packaged Windows app opens its bundled example', async () => {
       timeout: 15_000,
     });
     await expect(window.locator('#display')).toBeVisible();
+    const closeEvent = new Promise<void>((resolve) => app.once('close', resolve));
+    void app.close();
+    await closeEvent;
+    closed = true;
   } finally {
-    await stopTestApplication(app);
+    if (!closed) await stopTestApplication(app);
   }
 });
 

@@ -1,6 +1,6 @@
 # Current state
 
-Phase: `0.1.0-alpha.8` live-runtime diagnostics milestone validated and published.
+Phase: `0.1.0-alpha.9` watcher-shutdown hotfix locally validated; publication pending.
 
 Published on 2026-08-11: prerelease `v0.1.0-alpha.8` contains the validated Windows x64 artifact and `main` is synchronized.
 
@@ -47,3 +47,5 @@ Alpha.7 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace bu
 Alpha.8 adds structured live Worker field updates/events in the Inspector, serialized full-restart hot reload, `--project` startup, explicit SceneGraph extension loading, observer cardinality evidence, and an automated IEDB visual navigation/detail/Back flow. Hierarchical runtime node-ID mapping and live Inspector editing remain open, so roadmap 0.2 is not yet closed.
 
 Alpha.8 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, 4 Playwright tests including IEDB and packaged runtime execution, direct IEDB validation, and Windows packaging passed. Portable artifact: 107,904,534 bytes; SHA-256 `D078A23F4D68D08BBD9F16305C0DBFAB54494D50FC3F0F1429153CEE71EAA060`; Authenticode status `NotSigned`.
+
+Alpha.9 evidence: formatting, lint, typecheck, 18 Vitest tests, all workspace builds, dependency audit, 5 Playwright tests, Windows packaging, and a packaged-app graceful-close smoke passed. Portable artifact: 107,903,275 bytes; SHA-256 `2C727EC6A2674008E81FCCC93F131EA1E02C40DBE52671AC4B0ECD0B263FF952`; Authenticode status `NotSigned`.

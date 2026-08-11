@@ -26,39 +26,48 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 async function watchProject(window: BrowserWindow, rootPath: string): Promise<void> {
-  await watchers.get(window.webContents.id)?.close();
-  roots.set(window.webContents.id, rootPath);
+  const webContentsId = window.webContents.id;
+  await watchers.get(webContentsId)?.close();
+  roots.set(webContentsId, rootPath);
   const watcher = watch(['manifest', 'source', 'components', 'images', 'fonts', 'locale'], {
     cwd: rootPath,
     ignoreInitial: true,
     ignored: /(^|[/\\])\../,
   });
   const reload = (changedPath: string) => {
-    const previous = reloadTimers.get(window.webContents.id);
+    if (window.isDestroyed()) return;
+    const previous = reloadTimers.get(webContentsId);
     if (previous) clearTimeout(previous);
     reloadTimers.set(
-      window.webContents.id,
+      webContentsId,
       setTimeout(async () => {
         try {
+          if (window.isDestroyed()) return;
+          const snapshot = await loadProject(rootPath);
+          if (window.isDestroyed()) return;
           window.webContents.send('project:changed', {
             changedPath: changedPath.replaceAll('\\', '/'),
-            snapshot: await loadProject(rootPath),
+            snapshot,
           });
         } catch (error) {
-          window.webContents.send(
-            'project:watchError',
-            error instanceof Error ? error.message : String(error),
-          );
+          if (!window.isDestroyed())
+            window.webContents.send(
+              'project:watchError',
+              error instanceof Error ? error.message : String(error),
+            );
         }
       }, 150),
     );
   };
   watcher.on('add', reload).on('change', reload).on('unlink', reload);
-  watchers.set(window.webContents.id, watcher);
+  watchers.set(webContentsId, watcher);
   window.once('closed', () => {
+    const timer = reloadTimers.get(webContentsId);
+    if (timer) clearTimeout(timer);
+    reloadTimers.delete(webContentsId);
     void watcher.close();
-    watchers.delete(window.webContents.id);
-    roots.delete(window.webContents.id);
+    watchers.delete(webContentsId);
+    roots.delete(webContentsId);
   });
 }
 

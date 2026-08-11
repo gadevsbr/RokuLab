@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.9 - 2026-08-11
+
+- Prevent project watcher cleanup from reading a destroyed BrowserWindow.
+- Cancel pending reload timers and suppress IPC after the window begins closing.
+- Add a graceful-close regression test with a pending project filesystem event.
+
 ## 0.1.0-alpha.8 - 2026-08-11
 
 - Register and verify the SceneGraph extension explicitly for real channels.

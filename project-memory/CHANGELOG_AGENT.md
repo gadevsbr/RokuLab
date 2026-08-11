@@ -5,6 +5,7 @@
 - Added the mature BrightScript/SceneGraph compatibility runtime, project archiving, isolated custom Electron protocol, canvas rendering, engine console, and remote/media controls.
 - Added pixel-backed end-to-end rendering evidence and documented the remaining 0.2 integration gates.
 - Added live Worker mutation inspection, serialized runtime restart, and automated IEDB navigation/detail/Back evidence.
+- Fixed the BrowserWindow-destroyed shutdown race in project watcher cleanup and added regression coverage.
 
 ## 2026-08-10
 
