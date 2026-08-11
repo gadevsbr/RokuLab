@@ -53,3 +53,6 @@
 - GitHub CLI 2.97.0 is installed at `C:\Program Files\GitHub CLI\gh.exe`, but `gh auth status` reports no authenticated host.
 - Final alpha.1 gate: lint, formatting, typecheck, 8 Vitest tests, 3 Playwright tests, 7 workspace builds, CLI validation, and dependency audit passed.
 - Windows portable package passed a packaged-app smoke. Size: 98,006,796 bytes. SHA-256: `AEC70E1531A75C803692553DBA0779BE8D6CBEE9DF1B394FAE726BEC3242132F`. Authenticode status: `NotSigned`.
+- Reworked the desktop shell into an Android-Studio-inspired TV IDE with a persistent Running TV tool window, central editor, Project explorer, Inspector, console, tool rail, status bar, and compact accessible controls.
+- Added E2E layout evidence that Project, editor, and Running TV occupy ordered left/center/right regions; 18 Vitest tests and all 5 Electron flows pass after the redesign.
+- Generated the unsigned alpha.10 Windows portable (107,897,310 bytes, SHA-256 `AFE7E7D7B5ACA4B128413194679714495A34CB2A427EE47552D2C1B87186A8CE`) and validated the packaged app.

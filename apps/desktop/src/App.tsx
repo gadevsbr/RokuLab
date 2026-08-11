@@ -426,34 +426,70 @@ export function App() {
   return (
     <main className="workbench">
       <header>
-        <strong>
+        <strong className="app-brand">
           <i>RL</i> RokuLab
         </strong>
-        <span>
+        <button className="project-switcher" title={project.rootPath}>
           {project.manifest.title}{' '}
           <em>
             {project.manifest.major_version ?? '0'}.{project.manifest.minor_version ?? '0'}.
             {project.manifest.build_version ?? '0'}
           </em>
-        </span>
+          <span>⌄</span>
+        </button>
+        <div className="toolbar-context">
+          <button title="Current branch">⑂ main ⌄</button>
+          <button title="Virtual TV profile">▣ Roku TV · 1080p ⌄</button>
+          <button title="Run configuration">⌁ app ⌄</button>
+        </div>
         <nav>
-          <button title="Run" onClick={() => void runEngine()}>
-            Run
-          </button>
-          <button title="Stop" disabled={!engineActive} onClick={() => void stopEngine()}>
-            Stop
+          <button
+            className="run-action"
+            aria-label="Run"
+            title="Run channel"
+            onClick={() => void runEngine()}
+          >
+            ▶
           </button>
           <button
+            aria-label="Stop"
+            title="Stop"
+            disabled={!engineActive}
+            onClick={() => void stopEngine()}
+          >
+            ■
+          </button>
+          <button
+            aria-label="Reload"
             title="Reload"
             onClick={() => void window.rokulab?.openPath(project.rootPath).then(setProject)}
           >
-            Reload
+            ↻
           </button>
-          <button onClick={() => setProject(undefined)}>Open...</button>
+          <button
+            aria-label="Open another project"
+            title="Open another project"
+            onClick={() => setProject(undefined)}
+          >
+            ⋮
+          </button>
         </nav>
       </header>
+      <aside className="tool-rail" aria-label="Tool windows">
+        <button className="active" title="Project">
+          ▱
+        </button>
+        <button title="SceneGraph">◇</button>
+        <button title="Inspector">⚙</button>
+        <button title="Problems">△</button>
+        <span />
+        <button title="Terminal">›_</button>
+      </aside>
       <aside className="explorer">
-        <h2>PROJECT</h2>
+        <div className="panel-title">
+          <h2>PROJECT</h2>
+          <button title="Panel options">⋮</button>
+        </div>
         <FileTree
           entries={project.files}
           selected={file?.path}
@@ -483,40 +519,30 @@ export function App() {
           )}
         </div>
         {workspaceTab === 'Preview' ? (
-          <>
-            <div className="display-toolbar">
-              <span>VIRTUAL ROKU</span>
-              <span>1080p | 100%</span>
+          <div className="scene-overview">
+            <div className="scene-overview-icon">◇</div>
+            <h1>Scene Preview</h1>
+            <p>
+              The channel is rendered continuously in the <b>Running TV</b> tool window.
+            </p>
+            <div className="scene-summary">
+              <span>
+                <b>{engineActive ? 'Running' : 'Stopped'}</b> runtime
+              </span>
+              <span>
+                <b>1920 × 1080</b> canvas
+              </span>
+              <span>
+                <b>{project.observers.length}</b> observers
+              </span>
+              <span>
+                <b>{project.events.length}</b> events
+              </span>
             </div>
-            <div className="tv">
-              <div className="screen">
-                <canvas id="display" width="1920" height="1080" hidden={!engineActive} />
-                <video id="player" hidden />
-                <div id="stats" hidden />
-                {!engineActive && project.scene && (
-                  <RenderNode node={project.scene} focused={focusedNode} />
-                )}
-              </div>
-            </div>
-            <div className="remote">
-              <button onClick={() => engineActive && sendEngineInput('back')}>Back</button>
-              <button onClick={() => move('up')}>Up</button>
-              <div>
-                <button onClick={() => move('left')}>Left</button>
-                <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
-                  OK
-                </button>
-                <button onClick={() => move('right')}>Right</button>
-              </div>
-              <button onClick={() => move('down')}>Down</button>
-              <div>
-                <button onClick={() => engineActive && sendEngineInput('rev')}>Rev</button>
-                <button onClick={() => engineActive && sendEngineInput('play')}>Play</button>
-                <button onClick={() => engineActive && sendEngineInput('fwd')}>Fwd</button>
-              </div>
-              <small>Arrow keys | Enter | Escape</small>
-            </div>
-          </>
+            <button className="open-entry" onClick={() => void openFile('source/main.brs')}>
+              Open source/main.brs
+            </button>
+          </div>
         ) : file ? (
           <div className="editor-shell">
             <Editor
@@ -540,7 +566,65 @@ export function App() {
           </div>
         ) : null}
       </section>
+      <aside className="device-panel">
+        <div className="panel-title">
+          <h2>RUNNING TV</h2>
+          <span className={engineActive ? 'device-status running' : 'device-status'}>
+            {engineActive ? '● Running' : '○ Stopped'}
+          </span>
+          <button title="Device options">⋮</button>
+        </div>
+        <div className="device-toolbar">
+          <span>Roku TV · 1080p</span>
+          <span>100%</span>
+        </div>
+        <div className="tv-stage">
+          <div className="tv">
+            <div className="screen">
+              <canvas id="display" width="1920" height="1080" hidden={!engineActive} />
+              <video id="player" hidden />
+              <div id="stats" hidden />
+              {!engineActive && project.scene && (
+                <RenderNode node={project.scene} focused={focusedNode} />
+              )}
+            </div>
+          </div>
+          <div className="tv-stand" />
+        </div>
+        <div className="remote">
+          <button aria-label="Back" onClick={() => engineActive && sendEngineInput('back')}>
+            ↩
+          </button>
+          <button aria-label="Up" onClick={() => move('up')}>
+            ↑
+          </button>
+          <div>
+            <button aria-label="Left" onClick={() => move('left')}>
+              ←
+            </button>
+            <button className="ok" onClick={() => engineActive && sendEngineInput('select')}>
+              OK
+            </button>
+            <button aria-label="Right" onClick={() => move('right')}>
+              →
+            </button>
+          </div>
+          <button aria-label="Down" onClick={() => move('down')}>
+            ↓
+          </button>
+          <div className="media-keys">
+            <button onClick={() => engineActive && sendEngineInput('rev')}>◀◀</button>
+            <button onClick={() => engineActive && sendEngineInput('play')}>▶Ⅱ</button>
+            <button onClick={() => engineActive && sendEngineInput('fwd')}>▶▶</button>
+          </div>
+          <small>Keyboard: arrows · Enter · Escape</small>
+        </div>
+      </aside>
       <aside className="inspector">
+        <div className="panel-title">
+          <h2>INSPECTOR</h2>
+          <button title="Panel options">⋮</button>
+        </div>
         <h2>RUNTIME</h2>
         <dl>
           <dt>state</dt>
@@ -666,6 +750,16 @@ export function App() {
               ))}
         </div>
       </section>
+      <footer className="statusbar">
+        <span>RokuLab</span>
+        <span>›</span>
+        <span>{project.manifest.title}</span>
+        <span className="status-spacer" />
+        <span>{engineActive ? 'Runtime connected' : 'Runtime stopped'}</span>
+        <span>UTF-8</span>
+        <span>LF</span>
+        <span>2 spaces</span>
+      </footer>
     </main>
   );
 }

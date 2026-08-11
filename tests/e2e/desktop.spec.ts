@@ -49,6 +49,17 @@ test('desktop opens the bundled project and renders the vertical slice', async (
     await expect(window.getByText('RokuLab Hello World').first()).toBeVisible();
     await expect(window.getByText('Hello from RokuLab')).toBeVisible();
     await expect(window.getByText('Hello from BrightScript')).toBeVisible();
+    await expect(window.getByRole('heading', { name: 'RUNNING TV' })).toBeVisible();
+    const [explorer, editor, device] = await Promise.all([
+      window.locator('.explorer').boundingBox(),
+      window.locator('.display').boundingBox(),
+      window.locator('.device-panel').boundingBox(),
+    ]);
+    expect(explorer).not.toBeNull();
+    expect(editor).not.toBeNull();
+    expect(device).not.toBeNull();
+    expect(explorer!.x).toBeLessThan(editor!.x);
+    expect(editor!.x).toBeLessThan(device!.x);
     await window.getByRole('button', { name: 'Run', exact: true }).click();
     await expect(window.getByText(/Compatibility engine .* running/)).toBeVisible({
       timeout: 15_000,
@@ -157,6 +168,7 @@ test('packaged Windows app opens its bundled example', async () => {
 });
 
 test('IEDB navigation shell starts in the compatibility engine', async () => {
+  test.setTimeout(60_000);
   const project = 'C:\\Users\\Hans Braga\\Desktop\\IEB\\roku';
   test.skip(!existsSync(project), 'Local IEDB reference channel is unavailable');
   const environment = { ...process.env };

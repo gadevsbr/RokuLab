@@ -6,6 +6,8 @@ RokuLab aims to let developers build and validate roughly 90% of a typical Brigh
 
 "High fidelity" means that the same project inputs produce materially equivalent layout, focus, state transitions, observer callbacks, network requests, media state, console output, and user flows within the compatibility matrix. Visual similarity alone is not sufficient.
 
+The desktop shell now follows an Android-Studio-inspired TV workflow: project navigation at left, code/scene workspace at center, and a persistent 16:9 Running TV at right with Inspector and console tool windows. Future debugger, network, profiler, device, and visual-diff capabilities should extend these tool-window regions instead of replacing the established layout.
+
 ## Release gates
 
 Every milestone must include:

@@ -1,6 +1,10 @@
 # Current state
 
-Phase: `0.1.0-alpha.9` watcher-shutdown hotfix validated and published.
+Phase: `0.1.0-alpha.10` Android-Studio-inspired TV workbench validation and publication.
+
+Alpha.10 separates IDE responsibilities into a compact toolbar, tool rail, Project explorer, central Preview/Monaco editor, persistent Running TV panel, Inspector, console, and status bar. The runtime and TV controls remain continuously available while source files are edited; accessible control names preserve keyboard/test automation.
+
+Alpha.10 evidence: formatting, lint, typecheck, 18 Vitest tests, dependency audit, all workspace builds, and 5 Playwright Electron tests passed, including ordered left/center/right workbench regions, IEDB navigation, packaged execution, and graceful shutdown. Portable artifact: 107,897,310 bytes; SHA-256 `AFE7E7D7B5ACA4B128413194679714495A34CB2A427EE47552D2C1B87186A8CE`; Authenticode status `NotSigned`.
 
 Published on 2026-08-11: prerelease `v0.1.0-alpha.9` contains the validated Windows x64 artifact and `main` is synchronized.
 
