@@ -7,6 +7,7 @@
 - Added an archive containment/size boundary and an integration test that inspects the generated manifest and component entries.
 - Kept roadmap 0.2 open: live-engine Inspector diagnostics/editing, safe hot reload, and the recorded IEDB navigation-shell flow remain required exit evidence.
 - Alpha.7 passed formatting, lint, typecheck, 18 Vitest tests, all workspace builds, audit, 3 Playwright tests including packaged runtime execution, and IEDB validation (`OK`, 6 grouped warnings). Portable size: 107,902,383 bytes; SHA-256: `4B4E73AAEFE8B9FCC27E63BDCBA2884F2DFC94F37D7F22545D969ED47EBBCFB3`; Authenticode: `NotSigned`.
+- Published prerelease `v0.1.0-alpha.7` with the validated Windows artifact and synchronized `main`.
 
 ## 2026-08-10
 
